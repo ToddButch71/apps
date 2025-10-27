@@ -1,13 +1,24 @@
-
 {
   "music_inventory": [
     {
-      "artist": "Example Artist",
-      "titles": ["Example Title"],
-      "media": "cd",
-      "year": 2025,
-      "serial_number": 1,
-      "genre": "rock"
+      "media": "DVD",
+      "artist": "Bjork",
+      "titles": [
+        "Vespertine"
+      ],
+      "year": 2001,
+      "serial_number": 75596265393,
+      "genre": "Electronic"
+    },
+    {
+      "media": "CD",
+      "artist": "Bjork",
+      "titles": [
+        "Voltaic"
+      ],
+      "year": 2009,
+      "serial_number": 15196462,
+      "genre": "Electronic"
     }
   ]
 }

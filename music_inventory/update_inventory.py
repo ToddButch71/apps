@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_PATH = Path("/Volumes/data/github/dataFiles/music_inventory.json")
+DEFAULT_PATH = Path("/Volumes/data/github/apps/music_inventory/music_inventory.json")
 
 
 def load(read_path: Path = DEFAULT_PATH):
@@ -58,23 +58,60 @@ def add_or_append(artist: str,
                   merge: bool = False,
                   read_path: Path = DEFAULT_PATH,
                   write_path: Path = DEFAULT_PATH):
-    """If merge==True, append the title to the first matching artist record (titles may be duplicated).
-    If merge==False (default), always create a new record. In all cases, serial_number is kept unique;
-    if a provided serial_number conflicts and auto_resolve_serial_conflict is True, a new serial (max+1)
-    will be assigned.
+    """If merge==True, try to find a matching artist record. For the same artist:
+    - If an album with matching media/year/genre exists, append the title to it
+    - Otherwise create a new album entry for that artist
+    If merge==False or artist not found, create a new record.
+    In all cases, serial_number is kept unique; if it conflicts and auto_resolve_serial_conflict
+    is True, a new serial (max+1) will be assigned.
     """
     data = load(read_path)
     recs = data.setdefault("music_inventory", [])
 
     if merge:
-        # find and update first matching artist (allow duplicate titles)
-        for rec in recs:
+        # Find artist and try to group with matching album if exists
+        for idx, rec in enumerate(recs):
             if rec.get("artist") == artist:
-                rec.setdefault("titles", [])
-                rec["titles"].append(title)
-                print(f'Appended title "{title}" to artist "{artist}" (duplicates allowed).')
-                save(data, write_path)
-                return
+                # Check if we have a matching album entry (same media/year/genre)
+                if (rec.get("media") == media and 
+                    rec.get("year") == (year or 0) and 
+                    rec.get("genre") == (genre or "")):
+                    # Found matching album, append title
+                    rec.setdefault("titles", [])
+                    if title not in rec["titles"]:
+                        rec["titles"].append(title)
+                        print(f'Appended "{title}" to existing {media} album for "{artist}"')
+                    else:
+                        print(f'Title "{title}" already exists in album')
+                    save(data, write_path)
+                    return
+                else:
+                    # Create new album entry for this artist
+                    if serial_number is None:
+                        serial_number = next_serial(data)
+                    else:
+                        existing = list_serials(data)
+                        if serial_number in existing:
+                            if auto_resolve_serial_conflict:
+                                new_serial = next_serial(data)
+                                print(f"Serial {serial_number} exists; assigning {new_serial}.")
+                                serial_number = new_serial
+                            else:
+                                raise ValueError(f"Serial {serial_number} exists (auto-resolve=False)")
+                    
+                    new_album = {
+                        "media": media,
+                        "artist": artist,
+                        "titles": [title],
+                        "year": year or 0,
+                        "serial_number": serial_number,
+                        "genre": genre or ""
+                    }
+                    # Insert new album right after the existing record for this artist
+                    recs.insert(idx + 1, new_album)
+                    print(f'Added new {media} album for "{artist}" with serial {serial_number}')
+                    save(data, write_path)
+                    return
 
     # Create new record (either merge was false or artist not found)
     if serial_number is None:
@@ -84,10 +121,10 @@ def add_or_append(artist: str,
         if serial_number in existing:
             if auto_resolve_serial_conflict:
                 new_serial = next_serial(data)
-                print(f"Provided serial_number {serial_number} already exists; assigning new serial_number {new_serial}.")
+                print(f"Serial {serial_number} exists; assigning {new_serial}.")
                 serial_number = new_serial
             else:
-                raise ValueError(f"serial_number {serial_number} already exists and auto_resolve_serial_conflict=False")
+                raise ValueError(f"Serial {serial_number} exists (auto-resolve=False)")
 
     new = {
         "media": media,
@@ -223,3 +260,4 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error:", e)
         raise
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

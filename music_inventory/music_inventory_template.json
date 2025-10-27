@@ -1,0 +1,13 @@
+
+{
+  "music_inventory": [
+    {
+      "artist": "Example Artist",
+      "titles": ["Example Title"],
+      "media": "cd",
+      "year": 2025,
+      "serial_number": 1,
+      "genre": "rock"
+    }
+  ]
+}
