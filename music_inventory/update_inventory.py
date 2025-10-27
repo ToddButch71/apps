@@ -48,6 +48,52 @@ def list_serials(data):
     return {r.get("serial_number") for r in data.get("music_inventory", []) if r.get("serial_number") is not None}
 
 
+def sort_inventory(data):
+    """Sort and regroup inventory records by artist, then by media/year/genre.
+    Records for the same artist are kept together, sorted by year then media type.
+    Returns a new dict with sorted records; does not modify input.
+    """
+    result = {"music_inventory": []}
+    recs = data.get("music_inventory", [])
+    
+    # Group by artist first
+    by_artist = {}
+    for rec in recs:
+        artist = rec.get("artist", "")
+        if artist not in by_artist:
+            by_artist[artist] = []
+        by_artist[artist].append(rec)
+    
+    # Sort artists alphabetically and sort each artist's albums by year/media
+    for artist in sorted(by_artist.keys()):
+        albums = by_artist[artist]
+        sorted_albums = sorted(
+            albums,
+            key=lambda r: (r.get("year", 0), r.get("media", ""), r.get("genre", ""))
+        )
+        result["music_inventory"].extend(sorted_albums)
+    
+    return result
+
+
+def list_albums_by_artist(data, artist):
+    """List all albums by the given artist, grouped by media type.
+    Returns a list of albums, empty if artist not found.
+    """
+    matches = []
+    for rec in data.get("music_inventory", []):
+        if rec.get("artist") == artist:
+            matches.append({
+                "media": rec.get("media", "unknown"),
+                "year": rec.get("year", 0),
+                "genre": rec.get("genre", ""),
+                "serial": rec.get("serial_number"),
+                "titles": rec.get("titles", [])
+            })
+    
+    return sorted(matches, key=lambda r: (r["year"], r["media"]))
+
+
 def add_or_append(artist: str,
                   title: str,
                   media: str = "cd",
@@ -151,6 +197,8 @@ if __name__ == "__main__":
     p.add_argument("--merge", action="store_true", help="If set, append title to first matching artist record (duplicates allowed). Otherwise create a new record")
     p.add_argument("--path", default=str(DEFAULT_PATH), help="Path to music_inventory.json")
     p.add_argument("--dry-run", action="store_true", help="If set, write output to a temporary file instead of modifying the real inventory")
+    p.add_argument("--sort", action="store_true", help="Sort and regroup all records by artist/year/media")
+    p.add_argument("--list-artist", help="List all albums by the specified artist")
 
     args = p.parse_args()
     # If running interactively (TTY), prompt for any missing values; if not a TTY, require artist/title
@@ -205,6 +253,43 @@ if __name__ == "__main__":
         if not args.artist or not args.title:
             p.error("--artist and --title are required when not running interactively")
     read_path_arg = Path(args.path)
+
+    # Handle --list-artist first (read-only operation)
+    if args.list_artist:
+        data = load(read_path_arg)
+        albums = list_albums_by_artist(data, args.list_artist)
+        if not albums:
+            print(f'No albums found for artist "{args.list_artist}"')
+            raise SystemExit(0)
+        
+        print(f'\nAlbums by {args.list_artist}:')
+        print('-' * (len(args.list_artist) + 10))
+        current_year = None
+        for album in albums:
+            if album["year"] != current_year:
+                current_year = album["year"]
+                print(f"\n{current_year}:")
+            titles = ", ".join(album["titles"])
+            print(f"  {album['media']:6} | {album['genre']:10} | #{album['serial']:4} | {titles}")
+        raise SystemExit(0)
+
+    # Handle --sort (requires write path)
+    if args.sort:
+        # decide write path: real file or temporary file for dry-run
+        if args.dry_run:
+            tf = tempfile.NamedTemporaryFile(prefix="music_inventory.sorted.", suffix=".json", delete=False)
+            tf.close()
+            write_path_arg = Path(tf.name)
+            print(f"Dry-run: will write sorted output to {write_path_arg}")
+        else:
+            write_path_arg = read_path_arg
+        
+        data = load(read_path_arg)
+        sorted_data = sort_inventory(data)
+        save(sorted_data, write_path_arg)
+        raise SystemExit(0)
+
+    # Regular add/append operation
     # decide write path: real file or temporary file for dry-run
     if args.dry_run:
         tf = tempfile.NamedTemporaryFile(prefix="music_inventory.dryrun.", suffix=".json", delete=False)
@@ -260,4 +345,3 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error:", e)
         raise
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
