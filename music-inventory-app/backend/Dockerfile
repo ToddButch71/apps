@@ -1,5 +1,5 @@
 FROM python:3.11-slim AS builder
-ENV DIRPATH=/Volumes/data/github/apps/music-inventory-app
+# ENV DIRPATH=/Volumes/data/github/apps/music-inventory-app
 WORKDIR /app/backend
 
 COPY requirements.txt .
