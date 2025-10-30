@@ -22,28 +22,28 @@ def search_inventory(term: str) -> List[dict]:
 def create_record(record: dict) -> dict:
     data = _load()
     recs = data.setdefault("music_inventory", [])
-    # ensure unique serial
-    existing = {r["serial_number"] for r in recs}
-    if record.get("serial_number") in existing:
+    # ensure unique serial - compare as strings
+    existing = {str(r["serial_number"]) for r in recs}
+    if str(record.get("serial_number")) in existing:
         raise ValueError("Duplicate serial")
     recs.append(record)
     _save(data)
     return record
 
-def update_record(serial: int, new_data: dict) -> dict:
+def update_record(serial, new_data: dict) -> dict:
     data = _load()
     recs = data.get("music_inventory", [])
     for idx, r in enumerate(recs):
-        if r["serial_number"] == serial:
+        if str(r["serial_number"]) == str(serial):
             recs[idx] = new_data
             _save(data)
             return new_data
     raise ValueError("Record not found")
 
-def delete_record(serial: int):
+def delete_record(serial):
     data = _load()
     recs = data.get("music_inventory", [])
-    new_recs = [r for r in recs if r["serial_number"] != serial]
+    new_recs = [r for r in recs if str(r["serial_number"]) != str(serial)]
     data["music_inventory"] = new_recs
     _save(data)
 

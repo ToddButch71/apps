@@ -100,6 +100,7 @@ def add_or_append(artist: str,
                   year: Optional[int] = None,
                   serial_number: Optional[int] = None,
                   genre: Optional[str] = None,
+                  media_count: int = 1,
                   auto_resolve_serial_conflict: bool = True,
                   merge: bool = False,
                   read_path: Path = DEFAULT_PATH,
@@ -151,6 +152,7 @@ def add_or_append(artist: str,
                         "titles": [title],
                         "year": year or 0,
                         "serial_number": serial_number,
+                        "media_count": media_count,
                         "genre": genre or ""
                     }
                     # Insert new album right after the existing record for this artist
@@ -178,6 +180,7 @@ def add_or_append(artist: str,
         "titles": [title],
         "year": year or 0,
         "serial_number": serial_number,
+        "media_count": media_count,
         "genre": genre or ""
     }
     recs.append(new)
@@ -192,6 +195,7 @@ if __name__ == "__main__":
     p.add_argument("--media", default="cd", help="Media type (cd, vinyl, digital, dvd, etc.)")
     p.add_argument("--year", type=int, help="Year")
     p.add_argument("--serial", type=int, dest="serial", help="Serial number for new record (optional)")
+    p.add_argument("--media-count", type=int, default=1, dest="media_count", help="Number of media items (default: 1)")
     p.add_argument("--genre", help="Genre e.g. rock, pop, jazz (optional)")
     p.add_argument("--no-auto-resolve", action="store_true", help="If set and serial conflicts, raise an error instead of auto-assigning")
     p.add_argument("--merge", action="store_true", help="If set, append title to first matching artist record (duplicates allowed). Otherwise create a new record")
@@ -234,6 +238,9 @@ if __name__ == "__main__":
             args.year = _ask_int("Year (press Enter for none)")
         if args.serial is None:
             args.serial = _ask_int("Serial number (press Enter to auto-assign)")
+        if args.media_count is None or args.media_count == 1:
+            mc = _ask_int("Media count (press Enter for 1)", allow_empty=True, default=1)
+            args.media_count = mc if mc is not None else 1
         if not args.genre:
             args.genre = _ask("Genre (optional)", "")
         # boolean flags: ask yes/no
@@ -322,6 +329,7 @@ if __name__ == "__main__":
             print(f"Media: {args.media}")
             print(f"Year: {args.year or '(none)'}")
             print(f"Serial: {serial_text}")
+            print(f"Media Count: {args.media_count}")
             print(f"Genre: {args.genre or '(none)'}")
             print(f"Inventory path: {read_path_arg} {dryrun_text}")
             print("--------")
@@ -337,6 +345,7 @@ if __name__ == "__main__":
             year=args.year,
             serial_number=args.serial,
             genre=args.genre,
+            media_count=args.media_count,
             auto_resolve_serial_conflict=(not args.no_auto_resolve),
             merge=args.merge,
             read_path=read_path_arg,

@@ -365,13 +365,13 @@
     <div class="auth-status" id="authStatus">
         <span id="authText">Not logged in</span>
         <button class="btn-logout" id="logoutBtn" style="display:none;">Logout</button>
-        <button class="btn btn-primary" id="loginBtn" onclick="showLoginModal()">Admin Login</button>
+        <button class="btn btn-primary" id="loginBtn" onclick="showLoginModal()">Login</button>
     </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <h2>Admin Login</h2>
+            <h2>Login</h2>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -419,21 +419,32 @@
                 </div>
                 <div class="form-group">
                     <label for="albumSerial">Serial Number:</label>
-                    <input type="number" id="albumSerial" required>
+                    <input type="text" id="albumSerial" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumMediaCount">Media Count:</label>
+                    <input type="number" id="albumMediaCount" min="1" value="1" required>
                 </div>
                 <div class="form-group">
                     <label for="albumGenre">Genre:</label>
-                    <select id="albumGenre" required>
-                        <option value="">Select genre</option>
-                        <option value="Electronic">Electronic</option>
-                        <option value="Metal">Metal</option>
-                        <option value="HipHop">Hip Hop</option>
-                        <option value="Rock">Rock</option>
-                        <option value="Jazz">Jazz</option>
-                        <option value="Classical">Classical</option>
-                        <option value="Pop">Pop</option>
-                        <option value="Other">Other</option>
-                    </select>
+                    <input type="text" id="albumGenre" list="genreList" required placeholder="Select or type a genre">
+                    <datalist id="genreList">
+                        <option value="Electronic">
+                        <option value="Metal">
+                        <option value="Hip Hop">
+                        <option value="Rock">
+                        <option value="Jazz">
+                        <option value="Classical">
+                        <option value="Pop">
+                        <option value="Country">
+                        <option value="R&B">
+                        <option value="Blues">
+                        <option value="Reggae">
+                        <option value="Punk">
+                        <option value="Indie">
+                        <option value="Folk">
+                        <option value="Other">
+                    </datalist>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary" id="albumSubmitBtn">Add Album</button>
@@ -474,6 +485,7 @@
                         <th>Album Title</th>
                         <th>Year Released</th>
                         <th>Serial Number</th>
+                        <th>Media Count</th>
                         <th>Genre</th>
                         <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
@@ -504,61 +516,31 @@
 
     <script type="module" src="/src/main.tsx"></script>
     <script>
-        // Security note: In production, this would fetch from a secure API endpoint
-        const musicData = [
-            {
-                "media": "DVD",
-                "artist": "Bjork",
-                "titles": ["Vespertine"],
-                "year": 2001,
-                "serial_number": 75596265393,
-                "genre": "Electronic"
-            },
-            {
-                "media": "CD",
-                "artist": "Bjork",
-                "titles": ["Voltaic"],
-                "year": 2009,
-                "serial_number": 15196462,
-                "genre": "Electronic"
-            },
-            {
-                "media": "CD",
-                "artist": "Tool",
-                "titles": ["Ænima"],
-                "year": 1996,
-                "serial_number": 614223108728,
-                "genre": "Metal"
-            },
-            {
-                "media": "Vinyl",
-                "artist": "Tool",
-                "titles": ["Fear Inoculum"],
-                "year": 2019,
-                "serial_number": 194398687919,
-                "genre": "Metal"
-            },
-            {
-                "media": "cd",
-                "artist": "Kendrick Lamar",
-                "titles": ["GNX"],
-                "year": 2024,
-                "serial_number": 602475686767,
-                "genre": "HipHop"
-            },
-            {
-                "media": "cd",
-                "artist": "Lovage",
-                "titles": ["Music To Make Love To Your Old Lady By"],
-                "year": 2001,
-                "serial_number": 676127505326,
-                "genre": "Electronic"
+        // Fetch data from backend API
+        let musicData = [];
+
+        async function loadInventory() {
+            try {
+                const response = await fetch('http://localhost:8000/inventory');
+                if (response.ok) {
+                    const data = await response.json();
+                    musicData = data;
+                    renderTable();
+                    updateStats();
+                } else {
+                    console.error('Failed to load inventory');
+                }
+            } catch (error) {
+                console.error('Error loading inventory:', error);
             }
-        ];
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize the app
             initApp();
+            
+            // Load inventory from backend
+            loadInventory();
             
             // Check if user is already logged in
             checkAuthStatus();
@@ -579,7 +561,8 @@
         
         function checkAuthStatus() {
             if (authToken) {
-                document.getElementById('authText').textContent = 'Logged in as admin';
+                const username = localStorage.getItem('username') || 'user';
+                document.getElementById('authText').textContent = `Logged in as ${username}`;
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 document.getElementById('actionButtons').classList.add('show');
@@ -617,7 +600,9 @@
                 if (response.ok) {
                     const data = await response.json();
                     authToken = data.access_token;
+                    const username = document.getElementById('username').value;
                     localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('username', username);
                     closeLoginModal();
                     checkAuthStatus();
                     renderTable(); // Re-render to show edit/delete buttons
@@ -637,6 +622,7 @@
         function logout() {
             authToken = null;
             localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
             document.getElementById('authText').textContent = 'Not logged in';
             document.getElementById('loginBtn').style.display = 'inline-block';
             document.getElementById('logoutBtn').style.display = 'none';
@@ -673,6 +659,7 @@
             document.getElementById('albumTitle').value = record.titles[0];
             document.getElementById('albumYear').value = record.year;
             document.getElementById('albumSerial').value = record.serial_number;
+            document.getElementById('albumMediaCount').value = record.media_count || 1;
             document.getElementById('albumGenre').value = record.genre;
             document.getElementById('albumError').style.display = 'none';
             document.getElementById('albumModal').style.display = 'block';
@@ -692,9 +679,21 @@
                 artist: document.getElementById('albumArtist').value,
                 titles: [document.getElementById('albumTitle').value],
                 year: parseInt(document.getElementById('albumYear').value),
-                serial_number: parseInt(document.getElementById('albumSerial').value),
+                serial_number: document.getElementById('albumSerial').value,
+                media_count: parseInt(document.getElementById('albumMediaCount').value),
                 genre: document.getElementById('albumGenre').value
             };
+            
+            // Confirmation prompt
+            if (editingSerial) {
+                if (!confirm(`Are you sure you want to update this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
+                    return;
+                }
+            } else {
+                if (!confirm(`Are you sure you want to add this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
+                    return;
+                }
+            }
             
             try {
                 let response;
@@ -722,21 +721,9 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    
-                    if (editingSerial) {
-                        // Update in local data
-                        const index = musicData.findIndex(item => item.serial_number === editingSerial);
-                        if (index !== -1) {
-                            musicData[index] = albumData;
-                        }
-                    } else {
-                        // Add to local data
-                        musicData.push(albumData);
-                    }
-                    
                     closeAlbumModal();
-                    renderTable();
-                    updateStats();
+                    // Reload inventory from backend
+                    await loadInventory();
                 } else {
                     const error = await response.json();
                     document.getElementById('albumError').textContent = error.detail || 'Failed to save album';
@@ -749,7 +736,16 @@
         }
         
         async function deleteRecord(serial) {
-            if (!confirm('Are you sure you want to delete this album?')) {
+            // Find the record to show details in confirmation
+            const record = musicData.find(item => item.serial_number === serial);
+            if (!record) {
+                alert('Album not found');
+                return;
+            }
+            
+            const confirmMessage = `Are you sure you want to DELETE this album?\n\nArtist: ${record.artist}\nTitle: ${record.titles[0]}\nYear: ${record.year}\nMedia: ${record.media}\n\nThis action cannot be undone!`;
+            
+            if (!confirm(confirmMessage)) {
                 return;
             }
             
@@ -762,13 +758,8 @@
                 });
                 
                 if (response.ok) {
-                    // Remove from local data
-                    const index = musicData.findIndex(item => item.serial_number === serial);
-                    if (index !== -1) {
-                        musicData.splice(index, 1);
-                    }
-                    renderTable();
-                    updateStats();
+                    // Reload inventory from backend
+                    await loadInventory();
                 } else {
                     alert('Failed to delete album');
                 }
@@ -813,8 +804,8 @@
                 if (authToken) {
                     actionsCell = `
                         <td>
-                            <button class="btn btn-edit" onclick="showEditRecordForm(${item.serial_number})">Edit</button>
-                            <button class="btn btn-delete" onclick="deleteRecord(${item.serial_number})">Delete</button>
+                            <button class="btn btn-edit" onclick="showEditRecordForm('${item.serial_number}')">Edit</button>
+                            <button class="btn btn-delete" onclick="deleteRecord('${item.serial_number}')">Delete</button>
                         </td>
                     `;
                 }
@@ -825,6 +816,7 @@
                     <td>${formattedTitles}</td>
                     <td>${item.year}</td>
                     <td>${item.serial_number}</td>
+                    <td>${item.media_count || 1}</td>
                     <td><span class="genre-badge ${getGenreClass(item.genre)}">${item.genre}</span></td>
                     ${actionsCell}
                 `;

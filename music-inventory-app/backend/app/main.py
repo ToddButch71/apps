@@ -8,7 +8,7 @@ from .crud import (
     get_inventory, search_inventory,
     create_record, update_record, delete_record
 )
-from .auth import get_current_admin
+from .auth import get_current_admin, create_token
 
 app = FastAPI(
     title="Music Inventory API",
@@ -106,11 +106,11 @@ def add_record(record: dict, admin: str = Depends(get_current_admin)):
     return create_record(record)
 
 @app.put("/inventory/{serial}")
-def modify_record(serial: int, record: dict, admin: str = Depends(get_current_admin)):
+def modify_record(serial: str, record: dict, admin: str = Depends(get_current_admin)):
     return update_record(serial, record)
 
 @app.delete("/inventory/{serial}")
-def remove_record(serial: int, admin: str = Depends(get_current_admin)):
+def remove_record(serial: str, admin: str = Depends(get_current_admin)):
     delete_record(serial)
     return {"detail": "Deleted"}
 
@@ -133,7 +133,9 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), request: Request = N
     
     if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
         external_logger.info("Successful login - Username: %s - IP: %s", username, client_ip)
-        return {"access_token": "demo-token", "token_type": "bearer"}
+        # Create user-specific token
+        token = create_token(username)
+        return {"access_token": token, "token_type": "bearer"}
     
     # Log unauthorized access attempt
     external_logger.warning("UNAUTHORIZED login attempt - Username: %s - IP: %s", username, client_ip)
