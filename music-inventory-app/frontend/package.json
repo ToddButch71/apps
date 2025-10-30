@@ -1,0 +1,22 @@
+{
+  "name": "music-inventory-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.4",
+    "axios": "^1.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@vitejs/plugin-react-swc": "^3.4.0",
+    "typescript": "^5.2.2",
+    "vite": "^7.1.12"
+  }
+}
