@@ -198,18 +198,266 @@
             padding: 30px;
             color: #64748b;
         }
+        
+        /* Login modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .auth-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 99;
+        }
+        
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+        
+        .action-buttons {
+            display: none;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .action-buttons.show {
+            display: flex;
+        }
+        
+        .btn-add {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background: #059669;
+        }
+        
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
+        
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+        
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
-    <!-- Public Read-Only Version -->
+    <!-- Auth status indicator -->
+    <div class="auth-status" id="authStatus">
+        <span id="authText">Not logged in</span>
+        <button class="btn-logout" id="logoutBtn" style="display:none;">Logout</button>
+        <button class="btn btn-primary" id="loginBtn" onclick="showLoginModal()">Login</button>
+    </div>
 
-    <!-- Login Modal removed for public version -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Cancel</button>
+                </div>
+                <div id="loginError" style="color: red; margin-top: 10px; display: none;"></div>
+            </form>
+        </div>
+    </div>
 
-    <!-- Add/Edit Album Modal removed for public version -->
+    <!-- Add/Edit Album Modal -->
+    <div id="albumModal" class="modal">
+        <div class="modal-content">
+            <h2 id="albumModalTitle">Add New Album</h2>
+            <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
+                <div class="form-group">
+                    <label for="albumMedia">Media Type:</label>
+                    <select id="albumMedia" required>
+                        <option value="">Select media type</option>
+                        <option value="CD">CD</option>
+                        <option value="DVD">DVD</option>
+                        <option value="Vinyl">Vinyl</option>
+                        <option value="Digital">Digital</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="albumArtist">Artist:</label>
+                    <input type="text" id="albumArtist" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumTitle">Album Title:</label>
+                    <input type="text" id="albumTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumYear">Year Released:</label>
+                    <input type="number" id="albumYear" min="1900" max="2100" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumSerial">Serial Number:</label>
+                    <input type="text" id="albumSerial" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumMediaCount">Media Count:</label>
+                    <input type="number" id="albumMediaCount" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="albumGenre">Genre:</label>
+                    <input type="text" id="albumGenre" list="genreList" required placeholder="Select or type a genre">
+                    <datalist id="genreList">
+                        <option value="Electronic">
+                        <option value="Metal">
+                        <option value="Hip Hop">
+                        <option value="Rock">
+                        <option value="Jazz">
+                        <option value="Classical">
+                        <option value="Pop">
+                        <option value="Country">
+                        <option value="R&B">
+                        <option value="Blues">
+                        <option value="Reggae">
+                        <option value="Punk">
+                        <option value="Indie">
+                        <option value="Folk">
+                        <option value="Other">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="albumNotes">Notes (optional):</label>
+                    <textarea id="albumNotes" rows="3" placeholder="Add any notes about this album..."></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="albumSubmitBtn">Add Album</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAlbumModal()">Cancel</button>
+                </div>
+                <div id="albumError" style="color: red; margin-top: 10px; display: none;"></div>
+            </form>
+        </div>
+    </div>
 
     <div class="container">
         <header>
-            <h1>Music Inventory - Public Catalog</h1>
+            <h1>Music Inventory</h1>
             <p class="subtitle">Real-time searchable music catalog with genre classification and media type tracking</p>
         </header>
 
@@ -218,7 +466,10 @@
             <button class="search-btn">Search</button>
         </div>
         
-        <!-- Action buttons removed for public version -->
+        <!-- Action buttons (shown when authenticated) -->
+        <div class="action-buttons" id="actionButtons">
+            <button class="btn btn-add" onclick="showAddRecordForm()">Add New Album</button>
+        </div>
 
         <div class="table-container">
             <div class="table-header">
@@ -237,6 +488,7 @@
                         <th>Media Count</th>
                         <th>Genre</th>
                         <th>Notes</th>
+                        <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -291,7 +543,8 @@
             // Load inventory from backend
             loadInventory();
             
-            // Public version - no auth check needed
+            // Check if user is already logged in
+            checkAuthStatus();
             
             // Realtime indicator handling (simulated)
             setInterval(() => {
@@ -304,7 +557,219 @@
             }, 2000);
         });
 
-        // Public version - all auth and CRUD functions removed
+        // Auth state
+        let authToken = localStorage.getItem('authToken');
+        
+        function checkAuthStatus() {
+            if (authToken) {
+                const username = localStorage.getItem('username') || 'user';
+                document.getElementById('authText').textContent = `Logged in as ${username}`;
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                document.getElementById('actionButtons').classList.add('show');
+            }
+        }
+        
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').style.display = 'none';
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('http://localhost:8000/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.access_token;
+                    const username = document.getElementById('username').value;
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('username', username);
+                    closeLoginModal();
+                    checkAuthStatus();
+                    renderTable(); // Re-render to show edit/delete buttons
+                } else {
+                    // Get the actual error message from the backend
+                    const errorData = await response.json();
+                    const errorMessage = errorData.detail || 'Invalid credentials';
+                    document.getElementById('loginError').textContent = errorMessage;
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Login failed. Please try again.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        
+        function logout() {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
+            document.getElementById('authText').textContent = 'Not logged in';
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('actionButtons').classList.remove('show');
+            document.getElementById('actionsHeader').style.display = 'none';
+            renderTable(); // Re-render to hide action buttons
+        }
+        
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        // Password change handling
+        
+        // Album form handling
+        let editingSerial = null;
+        
+        function showAddRecordForm() {
+            editingSerial = null;
+            document.getElementById('albumModalTitle').textContent = 'Add New Album';
+            document.getElementById('albumSubmitBtn').textContent = 'Add Album';
+            document.getElementById('albumForm').reset();
+            document.getElementById('albumError').style.display = 'none';
+            document.getElementById('albumModal').style.display = 'block';
+        }
+        
+        function showEditRecordForm(serial) {
+            editingSerial = serial;
+            const record = musicData.find(item => item.serial_number == serial);
+            if (!record) return;
+            
+            document.getElementById('albumModalTitle').textContent = 'Edit Album';
+            document.getElementById('albumSubmitBtn').textContent = 'Update Album';
+            document.getElementById('albumMedia').value = record.media;
+            document.getElementById('albumArtist').value = record.artist;
+            document.getElementById('albumTitle').value = record.titles[0];
+            document.getElementById('albumYear').value = record.year;
+            document.getElementById('albumSerial').value = record.serial_number;
+            document.getElementById('albumMediaCount').value = record.media_count || 1;
+            document.getElementById('albumGenre').value = record.genre;
+            document.getElementById('albumNotes').value = record.notes || "";
+            document.getElementById('albumError').style.display = 'none';
+            document.getElementById('albumModal').style.display = 'block';
+        }
+        
+        function closeAlbumModal() {
+            document.getElementById('albumModal').style.display = 'none';
+            document.getElementById('albumForm').reset();
+            editingSerial = null;
+        }
+        
+        async function handleAlbumSubmit(event) {
+            event.preventDefault();
+            
+            const albumData = {
+                media: document.getElementById('albumMedia').value,
+                artist: document.getElementById('albumArtist').value,
+                titles: [document.getElementById('albumTitle').value],
+                year: parseInt(document.getElementById('albumYear').value),
+                serial_number: document.getElementById('albumSerial').value,
+                media_count: parseInt(document.getElementById('albumMediaCount').value),
+                genre: document.getElementById('albumGenre').value,
+                notes: document.getElementById('albumNotes').value || ""
+            };
+            
+            // Confirmation prompt
+            if (editingSerial) {
+                if (!confirm(`Are you sure you want to update this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
+                    return;
+                }
+            } else {
+                if (!confirm(`Are you sure you want to add this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
+                    return;
+                }
+            }
+            
+            try {
+                let response;
+                if (editingSerial) {
+                    // Update existing record
+                    response = await fetch(`http://localhost:8000/inventory/${editingSerial}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(albumData)
+                    });
+                } else {
+                    // Add new record
+                    response = await fetch('http://localhost:8000/inventory', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(albumData)
+                    });
+                }
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    closeAlbumModal();
+                    // Reload inventory from backend
+                    await loadInventory();
+                } else {
+                    const error = await response.json();
+                    document.getElementById('albumError').textContent = error.detail || 'Failed to save album';
+                    document.getElementById('albumError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('albumError').textContent = 'Failed to save album. Please try again.';
+                document.getElementById('albumError').style.display = 'block';
+            }
+        }
+        
+        async function deleteRecord(serial) {
+            // Find the record to show details in confirmation
+            const record = musicData.find(item => item.serial_number == serial);
+            if (!record) {
+                alert('Album not found');
+                return;
+            }
+            
+            const confirmMessage = `Are you sure you want to DELETE this album?\n\nArtist: ${record.artist}\nTitle: ${record.titles[0]}\nYear: ${record.year}\nMedia: ${record.media}\n\nThis action cannot be undone!`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8000/inventory/${serial}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    // Reload inventory from backend
+                    await loadInventory();
+                } else {
+                    alert('Failed to delete album');
+                }
+            } catch (error) {
+                alert('Failed to delete album. Please try again.');
+            }
+        }
 
         function initApp() {
             // Render initial table
@@ -337,10 +802,19 @@
                     `${item.titles[0]} + ${item.titles.length - 1} more` : 
                     item.titles[0];
                 
-                // Public version - no action buttons
+                // Create action buttons if authenticated
+                let actionsCell = '';
+                if (authToken) {
+                    actionsCell = `
+                        <td>
+                            <button class="btn btn-edit" onclick="showEditRecordForm('${item.serial_number}')">Edit</button>
+                            <button class="btn btn-delete" onclick="deleteRecord('${item.serial_number}')">Delete</button>
+                        </td>
+                    `;
+                }
                 
                 row.innerHTML = `
-                    <td>${item.media}</td>
+                    <td>${item.media.toLowerCase()}</td>
                     <td>${escapeHtml(item.artist)}</td>
                     <td>${formattedTitles}</td>
                     <td>${item.year}</td>
@@ -348,10 +822,18 @@
                     <td>${item.media_count || 1}</td>
                     <td>${item.genre}</td>
                     <td>${escapeHtml(item.notes || "")}</td>
+                    ${actionsCell}
                 `;
                 
                 tbody.appendChild(row);
             });
+            
+            // Show/hide actions header based on auth
+            if (authToken) {
+                document.getElementById('actionsHeader').style.display = '';
+            } else {
+                document.getElementById('actionsHeader').style.display = 'none';
+            }
         }
 
         function escapeHtml(unsafe) {
@@ -362,6 +844,8 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
+
+
 
 
         function updateStats() {
