@@ -324,7 +324,7 @@ docker compose up -d public-frontend
 
 ## 👥 Contributors
 
-[Your Name/Team]
+Todd Butcher (Todd.Butcher71@gmail.com)
 
 ## 🙏 Acknowledgments
 
