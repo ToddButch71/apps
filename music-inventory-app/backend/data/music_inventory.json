@@ -27,7 +27,7 @@
       "media": "CD",
       "artist": "Tool",
       "titles": [
-        "Ænima"
+        "\u00c6nima"
       ],
       "year": 1996,
       "serial_number": 614223108728,
@@ -150,6 +150,30 @@
       "media_count": 1,
       "genre": "DnB",
       "notes": ""
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Chaosphere"
+      ],
+      "year": 2023,
+      "serial_number": "251981704562",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Limited edition Green splatter yellow."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Immutable"
+      ],
+      "year": 2025,
+      "serial_number": "2000720201a",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Merch table purchase at the April 2025 Denver show. Bronze platters. Pre-signed by 4 of 5 members. Has Setlist from Tomas' drum set hand delivered by Jimmy the drum tech."
     }
   ]
 }
