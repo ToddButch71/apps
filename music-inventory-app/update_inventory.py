@@ -20,9 +20,9 @@ import json
 import tempfile
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
-DEFAULT_PATH = Path("/Volumes/data/github/apps/music_inventory/music_inventory.json")
+DEFAULT_PATH = Path("/Volumes/data/github/apps/music-inventory-app/backend/data/music_inventory.json")
 
 
 def load(read_path: Path = DEFAULT_PATH):
@@ -33,28 +33,30 @@ def load(read_path: Path = DEFAULT_PATH):
         return {}
 
 
-def save(data, write_path: Path = DEFAULT_PATH):
-    write_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+def save(inventory_data, write_path: Path = DEFAULT_PATH):
+    write_path.write_text(json.dumps(inventory_data, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Saved {write_path}")
 
 
-def next_serial(data):
-    recs = data.get("music_inventory", [])
+def next_serial(inventory_data):
+    """Generate next available serial number (integer only).
+    For alphanumeric serials, user must provide them explicitly."""
+    recs = inventory_data.get("music_inventory", [])
     nums = [r.get("serial_number", 0) for r in recs if isinstance(r.get("serial_number", None), int)]
     return (max(nums) + 1) if nums else 1
 
 
-def list_serials(data):
-    return {r.get("serial_number") for r in data.get("music_inventory", []) if r.get("serial_number") is not None}
+def list_serials(inventory_data):
+    return {r.get("serial_number") for r in inventory_data.get("music_inventory", []) if r.get("serial_number") is not None}
 
 
-def sort_inventory(data):
+def sort_inventory(inventory_data):
     """Sort and regroup inventory records by artist, then by media/year/genre.
     Records for the same artist are kept together, sorted by year then media type.
     Returns a new dict with sorted records; does not modify input.
     """
     result = {"music_inventory": []}
-    recs = data.get("music_inventory", [])
+    recs = inventory_data.get("music_inventory", [])
     
     # Group by artist first
     by_artist = {}
@@ -66,9 +68,9 @@ def sort_inventory(data):
     
     # Sort artists alphabetically and sort each artist's albums by year/media
     for artist in sorted(by_artist.keys()):
-        albums = by_artist[artist]
+        artist_albums = by_artist[artist]
         sorted_albums = sorted(
-            albums,
+            artist_albums,
             key=lambda r: (r.get("year", 0), r.get("media", ""), r.get("genre", ""))
         )
         result["music_inventory"].extend(sorted_albums)
@@ -76,12 +78,12 @@ def sort_inventory(data):
     return result
 
 
-def list_albums_by_artist(data, artist):
+def list_albums_by_artist(inventory_data, artist):
     """List all albums by the given artist, grouped by media type.
     Returns a list of albums, empty if artist not found.
     """
     matches = []
-    for rec in data.get("music_inventory", []):
+    for rec in inventory_data.get("music_inventory", []):
         if rec.get("artist") == artist:
             matches.append({
                 "media": rec.get("media", "unknown"),
@@ -98,9 +100,10 @@ def add_or_append(artist: str,
                   title: str,
                   media: str = "cd",
                   year: Optional[int] = None,
-                  serial_number: Optional[int] = None,
+                  serial_number: Optional[Union[int, str]] = None,
                   genre: Optional[str] = None,
                   media_count: int = 1,
+                  notes: str = "",
                   auto_resolve_serial_conflict: bool = True,
                   merge: bool = False,
                   read_path: Path = DEFAULT_PATH,
@@ -112,8 +115,8 @@ def add_or_append(artist: str,
     In all cases, serial_number is kept unique; if it conflicts and auto_resolve_serial_conflict
     is True, a new serial (max+1) will be assigned.
     """
-    data = load(read_path)
-    recs = data.setdefault("music_inventory", [])
+    inventory_data = load(read_path)
+    recs = inventory_data.setdefault("music_inventory", [])
 
     if merge:
         # Find artist and try to group with matching album if exists
@@ -130,17 +133,20 @@ def add_or_append(artist: str,
                         print(f'Appended "{title}" to existing {media} album for "{artist}"')
                     else:
                         print(f'Title "{title}" already exists in album')
-                    save(data, write_path)
+                    save(inventory_data, write_path)
                     return
                 else:
                     # Create new album entry for this artist
                     if serial_number is None:
-                        serial_number = next_serial(data)
+                        serial_number = next_serial(inventory_data)
                     else:
-                        existing = list_serials(data)
+                        existing = list_serials(inventory_data)
+                        # Convert to int if it's a numeric string and auto-resolve is enabled
+                        if isinstance(serial_number, str) and serial_number.isdigit():
+                            serial_number = int(serial_number)
                         if serial_number in existing:
                             if auto_resolve_serial_conflict:
-                                new_serial = next_serial(data)
+                                new_serial = next_serial(inventory_data)
                                 print(f"Serial {serial_number} exists; assigning {new_serial}.")
                                 serial_number = new_serial
                             else:
@@ -153,22 +159,26 @@ def add_or_append(artist: str,
                         "year": year or 0,
                         "serial_number": serial_number,
                         "media_count": media_count,
-                        "genre": genre or ""
+                        "genre": genre or "",
+                        "notes": notes
                     }
                     # Insert new album right after the existing record for this artist
                     recs.insert(idx + 1, new_album)
                     print(f'Added new {media} album for "{artist}" with serial {serial_number}')
-                    save(data, write_path)
+                    save(inventory_data, write_path)
                     return
 
     # Create new record (either merge was false or artist not found)
     if serial_number is None:
-        serial_number = next_serial(data)
+        serial_number = next_serial(inventory_data)
     else:
-        existing = list_serials(data)
+        existing = list_serials(inventory_data)
+        # Convert to int if it's a numeric string and auto-resolve is enabled
+        if isinstance(serial_number, str) and serial_number.isdigit():
+            serial_number = int(serial_number)
         if serial_number in existing:
             if auto_resolve_serial_conflict:
-                new_serial = next_serial(data)
+                new_serial = next_serial(inventory_data)
                 print(f"Serial {serial_number} exists; assigning {new_serial}.")
                 serial_number = new_serial
             else:
@@ -181,11 +191,12 @@ def add_or_append(artist: str,
         "year": year or 0,
         "serial_number": serial_number,
         "media_count": media_count,
-        "genre": genre or ""
+        "genre": genre or "",
+        "notes": notes
     }
     recs.append(new)
     print(f'Created new record for "{artist}" with serial_number {serial_number}.')
-    save(data, write_path)
+    save(inventory_data, write_path)
 
 
 if __name__ == "__main__":
@@ -194,9 +205,10 @@ if __name__ == "__main__":
     p.add_argument("--title", help="Title to add (will prompt if missing when running interactively)")
     p.add_argument("--media", default="cd", help="Media type (cd, vinyl, digital, dvd, etc.)")
     p.add_argument("--year", type=int, help="Year")
-    p.add_argument("--serial", type=int, dest="serial", help="Serial number for new record (optional)")
+    p.add_argument("--serial", dest="serial", help="Serial number for new record - can be numeric or alphanumeric (optional)")
     p.add_argument("--media-count", type=int, default=1, dest="media_count", help="Number of media items (default: 1)")
     p.add_argument("--genre", help="Genre e.g. rock, pop, jazz (optional)")
+    p.add_argument("--notes", default="", help="Optional notes about the album")
     p.add_argument("--no-auto-resolve", action="store_true", help="If set and serial conflicts, raise an error instead of auto-assigning")
     p.add_argument("--merge", action="store_true", help="If set, append title to first matching artist record (duplicates allowed). Otherwise create a new record")
     p.add_argument("--path", default=str(DEFAULT_PATH), help="Path to music_inventory.json")
@@ -233,11 +245,12 @@ if __name__ == "__main__":
             args.title = _ask("Title")
         if not args.media:
             args.media = _ask("Media (cd, vinyl, digital)", "cd")
-        # year and serial are optional integers
+        # year is optional integer, serial can be string or int
         if args.year is None:
             args.year = _ask_int("Year (press Enter for none)")
         if args.serial is None:
-            args.serial = _ask_int("Serial number (press Enter to auto-assign)")
+            serial_input = _ask("Serial number (alphanumeric or numeric, press Enter to auto-assign)", "")
+            args.serial = serial_input if serial_input else None
         if args.media_count is None or args.media_count == 1:
             mc = _ask_int("Media count (press Enter for 1)", allow_empty=True, default=1)
             args.media_count = mc if mc is not None else 1
@@ -346,6 +359,7 @@ if __name__ == "__main__":
             serial_number=args.serial,
             genre=args.genre,
             media_count=args.media_count,
+            notes=args.notes,
             auto_resolve_serial_conflict=(not args.no_auto_resolve),
             merge=args.merge,
             read_path=read_path_arg,

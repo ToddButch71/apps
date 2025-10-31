@@ -247,12 +247,19 @@
             font-weight: 500;
         }
         
-        .form-group input {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #d1d5db;
             border-radius: 6px;
             font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
         }
         
         .btn {
@@ -447,6 +454,10 @@
                     </datalist>
                 </div>
                 <div class="form-group">
+                    <label for="albumNotes">Notes (optional):</label>
+                    <textarea id="albumNotes" rows="3" placeholder="Add any notes about this album..."></textarea>
+                </div>
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary" id="albumSubmitBtn">Add Album</button>
                     <button type="button" class="btn btn-secondary" onclick="closeAlbumModal()">Cancel</button>
                 </div>
@@ -487,6 +498,7 @@
                         <th>Serial Number</th>
                         <th>Media Count</th>
                         <th>Genre</th>
+                        <th>Notes</th>
                         <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
                 </thead>
@@ -649,7 +661,7 @@
         
         function showEditRecordForm(serial) {
             editingSerial = serial;
-            const record = musicData.find(item => item.serial_number === serial);
+            const record = musicData.find(item => item.serial_number == serial);
             if (!record) return;
             
             document.getElementById('albumModalTitle').textContent = 'Edit Album';
@@ -661,6 +673,7 @@
             document.getElementById('albumSerial').value = record.serial_number;
             document.getElementById('albumMediaCount').value = record.media_count || 1;
             document.getElementById('albumGenre').value = record.genre;
+            document.getElementById('albumNotes').value = record.notes || "";
             document.getElementById('albumError').style.display = 'none';
             document.getElementById('albumModal').style.display = 'block';
         }
@@ -681,7 +694,8 @@
                 year: parseInt(document.getElementById('albumYear').value),
                 serial_number: document.getElementById('albumSerial').value,
                 media_count: parseInt(document.getElementById('albumMediaCount').value),
-                genre: document.getElementById('albumGenre').value
+                genre: document.getElementById('albumGenre').value,
+                notes: document.getElementById('albumNotes').value || ""
             };
             
             // Confirmation prompt
@@ -737,7 +751,7 @@
         
         async function deleteRecord(serial) {
             // Find the record to show details in confirmation
-            const record = musicData.find(item => item.serial_number === serial);
+            const record = musicData.find(item => item.serial_number == serial);
             if (!record) {
                 alert('Album not found');
                 return;
@@ -818,6 +832,7 @@
                     <td>${item.serial_number}</td>
                     <td>${item.media_count || 1}</td>
                     <td><span class="genre-badge ${getGenreClass(item.genre)}">${item.genre}</span></td>
+                    <td>${escapeHtml(item.notes || "")}</td>
                     ${actionsCell}
                 `;
                 

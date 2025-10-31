@@ -7,8 +7,10 @@
         "Vespertine"
       ],
       "year": 2001,
-      "serial_number": 75596265393,
-      "genre": "Electronic"
+      "serial_number": "75596265393",
+      "media_count": 1,
+      "genre": "Electronic",
+      "notes": "If your played in your car while in motion, playback may not proceed past the current track. "
     },
     {
       "media": "CD",
@@ -18,17 +20,19 @@
       ],
       "year": 2009,
       "serial_number": 15196462,
-      "genre": "Electronic"
+      "genre": "Electronic",
+      "notes": ""
     },
     {
       "media": "CD",
       "artist": "Tool",
       "titles": [
-        "\u00c6nima"
+        "Ænima"
       ],
       "year": 1996,
       "serial_number": 614223108728,
-      "genre": "Metal"
+      "genre": "Metal",
+      "notes": ""
     },
     {
       "media": "Vinyl",
@@ -38,7 +42,8 @@
       ],
       "year": 2019,
       "serial_number": 194398687919,
-      "genre": "Metal"
+      "genre": "Metal",
+      "notes": ""
     },
     {
       "media": "cd",
@@ -48,7 +53,8 @@
       ],
       "year": 2024,
       "serial_number": 602475686767,
-      "genre": "HipHop"
+      "genre": "HipHop",
+      "notes": ""
     },
     {
       "media": "cd",
@@ -58,7 +64,8 @@
       ],
       "year": 2001,
       "serial_number": 676127505326,
-      "genre": "Electronic"
+      "genre": "Electronic",
+      "notes": ""
     },
     {
       "media": "Vinyl",
@@ -69,7 +76,8 @@
       "year": 2019,
       "serial_number": "WIGLP456",
       "media_count": 2,
-      "genre": "Jazz/Acid Jazz"
+      "genre": "Jazz/Acid Jazz",
+      "notes": "Purchased at the 2019 show in Denver. Double disc; one black, the other white. Has ticket stub."
     },
     {
       "media": "Vinyl",
@@ -80,7 +88,8 @@
       "year": 2016,
       "serial_number": "190295972967",
       "media_count": 2,
-      "genre": "Metal"
+      "genre": "Metal",
+      "notes": ""
     },
     {
       "media": "Vinyl",
@@ -91,7 +100,8 @@
       "year": 1993,
       "serial_number": "1422310521",
       "media_count": 2,
-      "genre": "Metal"
+      "genre": "Metal",
+      "notes": ""
     },
     {
       "media": "Vinyl",
@@ -102,7 +112,8 @@
       "year": 1985,
       "serial_number": "v-8645",
       "media_count": 1,
-      "genre": "Hip Hop"
+      "genre": "Hip Hop",
+      "notes": ""
     },
     {
       "media": "Vinyl",
@@ -113,7 +124,8 @@
       "year": 2024,
       "serial_number": "282762E1",
       "media_count": 1,
-      "genre": "Heavy Metal"
+      "genre": "Heavy Metal",
+      "notes": "Signed sleeve. \"Frosted Glass\" vinyl."
     },
     {
       "media": "Vinyl",
@@ -124,7 +136,20 @@
       "year": 2024,
       "serial_number": "9802821581",
       "media_count": 2,
-      "genre": "Heavy Metal"
+      "genre": "Heavy Metal",
+      "notes": "1 of 300 world wide. Purchased the 2024 show at The Skyway "
+    },
+    {
+      "media": "cd",
+      "artist": "A.R.K.",
+      "titles": [
+        "Untitled"
+      ],
+      "year": 1996,
+      "serial_number": "BONES006",
+      "media_count": 1,
+      "genre": "DnB",
+      "notes": ""
     }
   ]
 }
