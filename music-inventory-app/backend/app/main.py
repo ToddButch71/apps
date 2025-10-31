@@ -89,7 +89,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",  # Vite dev server
-        "http://localhost:8080"   # nginx-proxy
+        "http://localhost:8080",  # nginx-proxy
+        "http://localhost:9000"   # public frontend
     ],
     allow_credentials=True,
     allow_methods=["*"],

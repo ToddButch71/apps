@@ -1,0 +1,130 @@
+{
+  "music_inventory": [
+    {
+      "media": "DVD",
+      "artist": "Bjork",
+      "titles": [
+        "Vespertine"
+      ],
+      "year": 2001,
+      "serial_number": 75596265393,
+      "genre": "Electronic"
+    },
+    {
+      "media": "CD",
+      "artist": "Bjork",
+      "titles": [
+        "Voltaic"
+      ],
+      "year": 2009,
+      "serial_number": 15196462,
+      "genre": "Electronic"
+    },
+    {
+      "media": "CD",
+      "artist": "Tool",
+      "titles": [
+        "\u00c6nima"
+      ],
+      "year": 1996,
+      "serial_number": 614223108728,
+      "genre": "Metal"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Tool",
+      "titles": [
+        "Fear Inoculum"
+      ],
+      "year": 2019,
+      "serial_number": 194398687919,
+      "genre": "Metal"
+    },
+    {
+      "media": "cd",
+      "artist": "Kendrick Lamar",
+      "titles": [
+        "GNX"
+      ],
+      "year": 2024,
+      "serial_number": 602475686767,
+      "genre": "HipHop"
+    },
+    {
+      "media": "cd",
+      "artist": "Lovage",
+      "titles": [
+        "Music To Make Love To Your Old Lady By"
+      ],
+      "year": 2001,
+      "serial_number": 676127505326,
+      "genre": "Electronic"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "The Cinematic Orchestra",
+      "titles": [
+        "To Believe"
+      ],
+      "year": 2019,
+      "serial_number": "WIGLP456",
+      "media_count": 2,
+      "genre": "Jazz/Acid Jazz"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Faith No More",
+      "titles": [
+        "Album of The Year "
+      ],
+      "year": 2016,
+      "serial_number": "190295972967",
+      "media_count": 2,
+      "genre": "Metal"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Tool",
+      "titles": [
+        "Undertow"
+      ],
+      "year": 1993,
+      "serial_number": "1422310521",
+      "media_count": 2,
+      "genre": "Metal"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Boogie Boys ",
+      "titles": [
+        "A Fly Girl / City Life 12\" Single"
+      ],
+      "year": 1985,
+      "serial_number": "v-8645",
+      "media_count": 1,
+      "genre": "Hip Hop"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Fight The Fight",
+      "titles": [
+        "Shah of Time"
+      ],
+      "year": 2024,
+      "serial_number": "282762E1",
+      "media_count": 1,
+      "genre": "Heavy Metal"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Leperous",
+      "titles": [
+        "Melodies of Atonement"
+      ],
+      "year": 2024,
+      "serial_number": "9802821581",
+      "media_count": 2,
+      "genre": "Heavy Metal"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+FROM docker:27-cli
+
+# Install bash and inotify-tools for file watching
+RUN apk add --no-cache bash inotify-tools
+
+# Create working directory
+WORKDIR /workspace
+
+# Copy sync script
+COPY sync-public.sh /workspace/
+
+# Make script executable
+RUN chmod +x /workspace/sync-public.sh
+
+# Copy the watcher script
+COPY watch-sync-container.sh /workspace/
+RUN chmod +x /workspace/watch-sync-container.sh
+
+# Run the watcher
+CMD ["/workspace/watch-sync-container.sh"]

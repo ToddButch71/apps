@@ -1,0 +1,14 @@
+# Simple nginx container to serve static HTML
+FROM nginx:alpine
+
+# Copy the public HTML file and set proper permissions
+COPY index-public.html /usr/share/nginx/html/index.html
+
+# Fix permissions
+RUN chmod 644 /usr/share/nginx/html/index.html && \
+    chown nginx:nginx /usr/share/nginx/html/index.html
+
+# Expose port 80
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

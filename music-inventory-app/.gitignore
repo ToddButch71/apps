@@ -1,0 +1,5 @@
+# WireGuard configuration and keys (contains private keys and client configs)
+wireguard/
+
+# Backup files
+*.bak

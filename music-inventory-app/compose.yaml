@@ -21,6 +21,14 @@ services:
     ports:
       - "5173:80"
 
+  public-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile-public
+    depends_on: [backend]
+    ports:
+      - "9000:80"
+
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
@@ -55,3 +63,16 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
     privileged: true  # May be needed on macOS
+
+  file-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile.watcher
+    container_name: file-watcher
+    volumes:
+      - .:/workspace  # Mount entire project
+      - /var/run/docker.sock:/var/run/docker.sock  # Access to Docker daemon
+    restart: unless-stopped
+    depends_on:
+      - public-frontend
+

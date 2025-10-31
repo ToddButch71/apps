@@ -1,0 +1,7 @@
+# Ignore secrets file
+.secrets
+.secrets.env
+
+# Ignore log files
+logs/
+*.log

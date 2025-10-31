@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Inventory - Realtime Search</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f7fb;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            max-width: 700px;
+            margin: 0 auto 25px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .table-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        thead {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        tbody tr {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .genre-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .genre-electronic { background-color: #1e3a8a; color: white; }
+        .genre-metal { background-color: #1d3557; color: white; }
+        .genre-hiphop { background-color: #1e40af; color: white; }
+        .genre-electronic { background-color: #1e3a8a; color: white; }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .realtime-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4361ee;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .realtime-indicator span {
+            font-size: 1.2rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+        
+        /* Login modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        /* Auth and CRUD button styles removed for public version */
+        
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Public Read-Only Version -->
+
+    <!-- Login Modal removed for public version -->
+
+    <!-- Add/Edit Album Modal removed for public version -->
+
+    <div class="container">
+        <header>
+            <h1>Music Inventory - Public Catalog</h1>
+            <p class="subtitle">Real-time searchable music catalog with genre classification and media type tracking</p>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by artist, title, genre or serial number...">
+            <button class="search-btn">Search</button>
+        </div>
+        
+        <!-- Action buttons removed for public version -->
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Music Catalog</h2>
+                <button id="refreshBtn">Refresh Data</button>
+            </div>
+            
+            <table id="musicTable">
+                <thead>
+                    <tr>
+                        <th>Media Type</th>
+                        <th>Artist</th>
+                        <th>Album Title</th>
+                        <th>Year Released</th>
+                        <th>Serial Number</th>
+                        <th>Media Count</th>
+                        <th>Genre</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-value" id="totalRecords">6</div>
+                <div class="stat-label">Total Albums</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="latestYear">2024</div>
+                <div class="stat-label">Latest Release Year</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="genreElectron">3</div>
+                <div class="stat-label">Genres</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="realtime-indicator" id="realtimeIndicator">!</div>
+
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+        // Fetch data from backend API
+        let musicData = [];
+
+        async function loadInventory() {
+            try {
+                const response = await fetch('http://localhost:8000/inventory');
+                if (response.ok) {
+                    const data = await response.json();
+                    musicData = data;
+                    renderTable();
+                    updateStats();
+                } else {
+                    console.error('Failed to load inventory');
+                }
+            } catch (error) {
+                console.error('Error loading inventory:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the app
+            initApp();
+            
+            // Load inventory from backend
+            loadInventory();
+            
+            // Public version - no auth check needed
+            
+            // Realtime indicator handling (simulated)
+            setInterval(() => {
+                const indicator = document.getElementById('realtimeIndicator');
+                if (indicator.style.opacity === '1') {
+                    indicator.style.opacity = '0.5';
+                } else {
+                    indicator.style.opacity = '1';
+                }
+            }, 2000);
+        });
+
+        // Public version - all auth and CRUD functions removed
+
+        function initApp() {
+            // Render initial table
+            renderTable();
+            
+            // Add search functionality
+            setupSearch();
+            
+            // Add refresh button handler
+            document.getElementById('refreshBtn').addEventListener('click', () => {
+                setTimeout(() => { 
+                    renderTable();
+                    updateStats(); 
+                }, 500);
+            });
+            
+            // Initialize stats
+            updateStats();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            musicData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Format titles for display
+                const formattedTitles = item.titles.length > 1 ? 
+                    `${item.titles[0]} + ${item.titles.length - 1} more` : 
+                    item.titles[0];
+                
+                // Public version - no action buttons
+                
+                row.innerHTML = `
+                    <td>${item.media}</td>
+                    <td>${escapeHtml(item.artist)}</td>
+                    <td>${formattedTitles}</td>
+                    <td>${item.year}</td>
+                    <td>${item.serial_number}</td>
+                    <td>${item.media_count || 1}</td>
+                    <td><span class="genre-badge ${getGenreClass(item.genre)}">${item.genre}</span></td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        function getGenreClass(genre) {
+            switch(genre.toLowerCase()) {
+                case 'electronic': return 'genre-electronic';
+                case 'metal': return 'genre-metal';
+                case 'hiphop': return 'genre-hiphop';
+                default: return '';
+            }
+        }
+
+        function updateStats() {
+            const total = musicData.length;
+            const latestYear = Math.max(...musicData.map(item => item.year));
+            const electronCount = musicData.filter(item => item.genre === 'Electronic').length;
+            
+            document.getElementById('totalRecords').textContent = total;
+            document.getElementById('latestYear').textContent = latestYear;
+            document.getElementById('genreElectron').textContent = electronCount;
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (!searchTerm.trim()) return;
+                
+                document.querySelectorAll('#tableBody tr').forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const hasMatch = Array.from(cells).some(cell => 
+                        cell.textContent.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    row.style.display = hasMatch ? '' : 'none';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
