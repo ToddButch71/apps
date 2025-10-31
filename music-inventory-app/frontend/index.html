@@ -144,18 +144,7 @@
             border-bottom: 1px solid #e2e8f0;
         }
         
-        .genre-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .genre-electronic { background-color: #1e3a8a; color: white; }
-        .genre-metal { background-color: #1d3557; color: white; }
-        .genre-hiphop { background-color: #1e40af; color: white; }
-        .genre-electronic { background-color: #1e3a8a; color: white; }
+
         
         .stats {
             display: flex;
@@ -831,7 +820,7 @@
                     <td>${item.year}</td>
                     <td>${item.serial_number}</td>
                     <td>${item.media_count || 1}</td>
-                    <td><span class="genre-badge ${getGenreClass(item.genre)}">${item.genre}</span></td>
+                    <td>${item.genre}</td>
                     <td>${escapeHtml(item.notes || "")}</td>
                     ${actionsCell}
                 `;
@@ -857,14 +846,7 @@
         }
 
 
-        function getGenreClass(genre) {
-            switch(genre.toLowerCase()) {
-                case 'electronic': return 'genre-electronic';
-                case 'metal': return 'genre-metal';
-                case 'hiphop': return 'genre-hiphop';
-                default: return '';
-            }
-        }
+
 
         function updateStats() {
             const total = musicData.length;
