@@ -40,6 +40,34 @@
 
 ## Router Configuration
 
+### Option 1: Using Your Router's Existing WireGuard VPN (Recommended)
+
+If your router already has WireGuard VPN configured:
+
+1. **Connect to your router's VPN** when away from home
+2. **No additional port forwarding needed** - VPN gives you access to your local network
+3. **Access the public site:**
+   - Visit: `http://YOUR_MAC_LOCAL_IP:9000`
+   - Example: `http://192.168.1.100:9000`
+4. **Benefits:**
+   - All traffic is encrypted through VPN
+   - No need to expose port 9000 to internet
+   - More secure than direct port forwarding
+
+### Option 2: Direct Port Forwarding (Public Access Without VPN)
+
+**For the public read-only site (index-public.html):**
+- External Port: 9000
+- Internal IP: [Your Mac's local IP]
+- Internal Port: 9000
+- Protocol: TCP
+
+After forwarding, access from anywhere: `http://YOUR_PUBLIC_IP:9000`
+
+**Note:** This makes the site publicly accessible to anyone with your IP address.
+
+### Option 3: Run the Dockerized WireGuard (If you want separate VPN for this app)
+
 **Port Forwarding Rules:**
 - **WireGuard VPN (Required):**
   - External Port: 51820
@@ -68,7 +96,26 @@
 
 ## Accessing Your Music Inventory
 
-Once connected to WireGuard VPN:
+### Using Router's Existing VPN (Recommended):
+
+1. **Connect to your router's WireGuard VPN** from your phone/laptop
+2. **Access sites as if you were home:**
+   - Admin site: `http://YOUR_MAC_LOCAL_IP:8080`
+   - Public catalog: `http://YOUR_MAC_LOCAL_IP:9000`
+   - Example: `http://192.168.1.100:9000`
+
+### Using Direct Port Forwarding:
+
+1. **Public catalog (read-only):**
+   - From anywhere: `http://YOUR_PUBLIC_IP:9000`
+   - No login required
+   - Can only view albums
+
+2. **Admin site (requires VPN):**
+   - DO NOT expose port 8080 to internet
+   - Always use VPN for admin access: `http://YOUR_MAC_LOCAL_IP:8080`
+
+### Once connected to VPN:
 
 1. **From anywhere in the world:**
    - Visit: `http://YOUR_MAC_LOCAL_IP:8080`
@@ -100,17 +147,30 @@ Once connected to WireGuard VPN:
 ## Security Recommendations
 
 ✅ **DO:**
-- Use strong passwords for WireGuard admin UI
+- **Use your router's existing VPN** for the most secure access
+- Use strong passwords for admin UI
 - Use strong passwords in `.secrets` file
 - Monitor logs: `tail -f backend/logs/external_access.log`
-- Keep WireGuard updated: `docker compose pull wireguard`
+- Keep containers updated: `docker compose pull`
 - Use unique passwords for each admin user
 
 ❌ **DON'T:**
-- Expose port 8080 directly to internet (use VPN only)
+- Expose port 8080 directly to internet (admin site - use VPN only!)
+- Expose port 9000 if you want private access (public site - use VPN or port forward)
 - Share your WireGuard config files publicly
 - Use default passwords
-- Leave web UI (51821) exposed to internet
+
+### Recommended Setup:
+
+**Most Secure:**
+- Use router's VPN for both admin (8080) and public (9000) access
+- No ports exposed to internet
+- All access encrypted
+
+**Convenient Public Sharing:**
+- Use router's VPN for admin access (8080)
+- Port forward 9000 for public read-only catalog
+- Anyone can view your music collection
 
 ## Dynamic DNS (Optional)
 
@@ -152,6 +212,18 @@ cp -r wireguard wireguard-backup-$(date +%Y%m%d)
 
 ## Network Diagram
 
+### Using Router's Existing VPN:
+```
+Internet
+   ↓
+Router with WireGuard VPN
+   ↓ (VPN Tunnel - Encrypted)
+Your Mac (192.168.1.x)
+   ├── Admin Site (8080)   ← Accessible only via VPN
+   └── Public Site (9000)  ← Accessible via VPN or port forward
+```
+
+### Using Dockerized WireGuard:
 ```
 Internet
    ↓
@@ -160,7 +232,8 @@ Router (Port Forward 51820 UDP)
 Your Mac (192.168.1.x)
    ├── WireGuard (51820) ← VPN clients connect here
    ├── Web UI (51821)
-   └── Music App (8080)   ← Accessible only via VPN
+   ├── Admin Site (8080)   ← Accessible only via VPN
+   └── Public Site (9000)  ← Accessible via VPN
 ```
 
 ## Support

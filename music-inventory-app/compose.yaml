@@ -38,7 +38,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   wireguard:
-    image: ghcr.io/wg-easy/wg-easy
+    image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
     env_file:
       - backend/.secrets.env  # Load WireGuard password from file

@@ -5,18 +5,23 @@ A full-stack music catalog management system with Docker containerization, featu
 ## 🎵 Features
 
 ### Core Functionality
-- **Music Catalog Management**: Track albums by media type, artist, title, year, serial number, media count, and genre
+- **Music Catalog Management**: Track albums by media type, artist, title, year, serial number, media count, genre, and notes
 - **Real-time Search**: Instant filtering across all fields
 - **Dual Interfaces**:
   - **Admin Version** (localhost:5173 or localhost:8080): Full CRUD operations with authentication
-  - **Public Version** (localhost:9000): Read-only catalog for public sharing
-- **Genre Classification**: Categorized music collection with visual badges
+  - **Public Version** (localhost:9000): Read-only catalog for public sharing (no authentication)
+- **Genre Classification**: Categorized music collection
+- **Media Type Display**: Media types displayed in lowercase (cd, dvd, vinyl)
+- **Flexible Serial Numbers**: Support for both numeric (676127505326) and alphanumeric (WIGLP456, v-8645) serial numbers
 - **Multi-disc Support**: Track albums with multiple discs/media
 
 ### Security & Access
 - **User Authentication**: Token-based auth for admin users (admin/toddb only)
 - **Access Logging**: Tracks login attempts and external IP access
-- **WireGuard VPN**: Secure remote access to the application
+- **VPN Access Options**: 
+  - Use existing router WireGuard VPN (recommended)
+  - Direct port forwarding for public access
+  - Integrated WireGuard container (see WIREGUARD_SETUP.md)
 - **Public/Private Separation**: Isolated public catalog without admin capabilities
 
 ### Automation
@@ -152,12 +157,14 @@ docker compose up -d
 
 ### CLI Tool
 
-Update inventory via command line:
+Update inventory via command line with alphanumeric serial numbers:
 ```bash
 python update_inventory.py --media CD --artist "Artist Name" \
   --title "Album Title" --year 2024 --serial ABC123 \
-  --media-count 2 --genre Rock
+  --media-count 2 --genre Rock --notes "Special edition"
 ```
+
+The CLI tool prompts for confirmation before saving any changes.
 
 ### Auto-Sync
 
@@ -193,14 +200,33 @@ docker compose logs -f file-watcher
 - Encrypted tunnel via UDP port 51820
 - Web UI on TCP port 51821
 - Requires router port forwarding for external access
+- **Note**: If your router has built-in WireGuard VPN, use that instead (see WIREGUARD_SETUP.md)
 
 ## 🌐 Public Deployment
+
+### Remote Access Options
+
+See `WIREGUARD_SETUP.md` for detailed remote access configurations:
+
+**Option 1: Use Router VPN (Recommended)**
+- If your router has WireGuard VPN, use that to access the application
+- No additional port forwarding needed
+- Connect to VPN, then access services at local IP addresses
+
+**Option 2: Direct Port Forwarding**
+- Forward specific ports through your router
+- Simpler but less secure for admin interface
+
+**Option 3: Dockerized WireGuard**
+- Use the included WireGuard container
+- Full VPN access to all services
 
 ### Port Forwarding
 Configure your router to forward:
 - **TCP 9000** → Your machine's local IP (for public catalog)
-- **UDP 51820** → Your machine's local IP (for WireGuard VPN)
-- **TCP 51821** → Your machine's local IP (for WireGuard UI)
+- **TCP 8080** → Your machine's local IP (for admin interface - use VPN instead if possible)
+- **UDP 51820** → Your machine's local IP (for WireGuard VPN, if using Option 3)
+- **TCP 51821** → Your machine's local IP (for WireGuard UI, if using Option 3)
 
 ### Access via VPN
 1. Log into WireGuard UI at http://localhost:51821

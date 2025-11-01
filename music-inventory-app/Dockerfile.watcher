@@ -1,4 +1,4 @@
-FROM docker:27-cli
+FROM docker:28.5-cli
 
 # Install bash and inotify-tools for file watching
 RUN apk add --no-cache bash inotify-tools
