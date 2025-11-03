@@ -176,17 +176,93 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #4361ee;
+            background-color: #10b981;
             color: white;
-            width: 50px;
+            min-width: 50px;
             height: 50px;
-            border-radius: 50%;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0 15px;
+            gap: 8px;
+        }
+        
+        .realtime-indicator:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .realtime-indicator.syncing {
+            background-color: #3b82f6;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .realtime-indicator.error {
+            background-color: #ef4444;
+        }
+        
+        .realtime-indicator.updated {
+            background-color: #f59e0b;
+            animation: flash 2s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .indicator-icon {
+            font-size: 1.2rem;
+        }
+        
+        .indicator-text {
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        
+        .indicator-tooltip {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background-color: #1e293b;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 0.875rem;
+            min-width: 200px;
+            display: none;
+            z-index: 101;
+        }
+        
+        .indicator-tooltip.show {
+            display: block;
+        }
+        
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .tooltip-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tooltip-label {
+            font-weight: 600;
+            margin-right: 12px;
         }
         
         .realtime-indicator span {
@@ -513,7 +589,23 @@
         </div>
     </div>
 
-    <div class="realtime-indicator" id="realtimeIndicator">!</div>
+    <div class="realtime-indicator" id="realtimeIndicator" title="Click for sync details">
+        <span class="indicator-icon">✓</span>
+        <div class="indicator-tooltip" id="indicatorTooltip">
+            <div class="tooltip-row">
+                <span class="tooltip-label">Status:</span>
+                <span id="syncStatus">Connected</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Last Check:</span>
+                <span id="lastCheck">Just now</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Records:</span>
+                <span id="recordCount">0</span>
+            </div>
+        </div>
+    </div>
 
     <script>
         // API URL configuration - dynamically constructed based on current hostname
@@ -521,21 +613,134 @@
         
         // Fetch data from backend API
         let musicData = [];
+        let lastRecordCount = 0;
+        let lastCheckTime = new Date();
+        let syncCheckInterval = null;
 
         async function loadInventory() {
+            const indicator = document.getElementById('realtimeIndicator');
+            const icon = indicator?.querySelector('.indicator-icon');
+            
             try {
+                // Show syncing state
+                if (indicator) {
+                    indicator.classList.add('syncing');
+                    if (icon) icon.textContent = '↻';
+                }
+                
                 const response = await fetch(API_URL + '/inventory');
                 if (response.ok) {
                     const data = await response.json();
+                    const previousCount = musicData.length;
                     musicData = data;
                     renderTable();
                     updateStats();
+                    
+                    // Update sync status
+                    updateSyncStatus('success', data.length, previousCount);
                 } else {
                     console.error('Failed to load inventory');
+                    updateSyncStatus('error');
                 }
             } catch (error) {
                 console.error('Error loading inventory:', error);
+                updateSyncStatus('error');
             }
+        }
+        
+        function updateSyncStatus(status, currentCount = 0, previousCount = 0) {
+            const indicator = document.getElementById('realtimeIndicator');
+            const icon = indicator?.querySelector('.indicator-icon');
+            const statusText = document.getElementById('syncStatus');
+            const lastCheckText = document.getElementById('lastCheck');
+            const recordCountText = document.getElementById('recordCount');
+            
+            if (!indicator) return;
+            
+            // Remove all status classes
+            indicator.classList.remove('syncing', 'error', 'updated');
+            
+            lastCheckTime = new Date();
+            
+            if (status === 'success') {
+                if (currentCount !== previousCount && previousCount > 0) {
+                    // Data changed
+                    indicator.classList.add('updated');
+                    if (icon) icon.textContent = '★';
+                    if (statusText) statusText.textContent = 'Updated!';
+                    
+                    // Reset to normal after 3 seconds
+                    setTimeout(() => {
+                        indicator.classList.remove('updated');
+                        if (icon) icon.textContent = '✓';
+                        if (statusText) statusText.textContent = 'Connected';
+                    }, 3000);
+                } else {
+                    // Normal connected state
+                    if (icon) icon.textContent = '✓';
+                    if (statusText) statusText.textContent = 'Connected';
+                }
+                
+                if (recordCountText) recordCountText.textContent = currentCount;
+                lastRecordCount = currentCount;
+            } else if (status === 'error') {
+                indicator.classList.add('error');
+                if (icon) icon.textContent = '✗';
+                if (statusText) statusText.textContent = 'Error';
+            }
+            
+            if (lastCheckText) {
+                lastCheckText.textContent = formatLastCheck(lastCheckTime);
+            }
+        }
+        
+        function formatLastCheck(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSec = Math.floor(diffMs / 1000);
+            const diffMin = Math.floor(diffSec / 60);
+            
+            if (diffSec < 10) return 'Just now';
+            if (diffSec < 60) return `${diffSec}s ago`;
+            if (diffMin < 60) return `${diffMin}m ago`;
+            
+            return date.toLocaleTimeString();
+        }
+        
+        function initRealtimeIndicator() {
+            const indicator = document.getElementById('realtimeIndicator');
+            const tooltip = document.getElementById('indicatorTooltip');
+            
+            if (!indicator || !tooltip) return;
+            
+            // Toggle tooltip on click
+            indicator.addEventListener('click', (e) => {
+                e.stopPropagation();
+                tooltip.classList.toggle('show');
+            });
+            
+            // Close tooltip when clicking outside
+            document.addEventListener('click', () => {
+                tooltip.classList.remove('show');
+            });
+            
+            // Prevent tooltip from closing when clicking inside it
+            tooltip.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Update "last check" time every 10 seconds
+            setInterval(() => {
+                const lastCheckText = document.getElementById('lastCheck');
+                if (lastCheckText) {
+                    lastCheckText.textContent = formatLastCheck(lastCheckTime);
+                }
+            }, 10000);
+            
+            // Auto-refresh every 30 seconds to check for updates
+            syncCheckInterval = setInterval(() => {
+                loadInventory();
+            }, 30000);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -548,15 +753,8 @@
             // Check if user is already logged in
             checkAuthStatus();
             
-            // Realtime indicator handling (simulated)
-            setInterval(() => {
-                const indicator = document.getElementById('realtimeIndicator');
-                if (indicator.style.opacity === '1') {
-                    indicator.style.opacity = '0.5';
-                } else {
-                    indicator.style.opacity = '1';
-                }
-            }, 2000);
+            // Initialize realtime sync indicator
+            initRealtimeIndicator();
         });
 
         // Auth state

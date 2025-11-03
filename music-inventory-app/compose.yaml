@@ -6,6 +6,7 @@ services:
       - ./backend/data:/data   # persistence for JSON file
       - ./backend/.secrets:/app/backend/.secrets:ro   # mount credentials file
       - ./backend/logs:/app/backend/logs   # persist external access logs
+      - ./VERSION:/app/VERSION:ro   # mount version file
     environment:
       - PYTHONUNBUFFERED=1
     ports:
