@@ -515,14 +515,16 @@
 
     <div class="realtime-indicator" id="realtimeIndicator">!</div>
 
-    <script type="module" src="/src/main.tsx"></script>
     <script>
+        // API URL configuration - dynamically constructed based on current hostname
+        const API_URL = window.location.protocol + '//' + window.location.hostname + ':8000';
+        
         // Fetch data from backend API
         let musicData = [];
 
         async function loadInventory() {
             try {
-                const response = await fetch('http://localhost:8000/inventory');
+                const response = await fetch(API_URL + '/inventory');
                 if (response.ok) {
                     const data = await response.json();
                     musicData = data;
@@ -590,7 +592,7 @@
                 formData.append('username', username);
                 formData.append('password', password);
                 
-                const response = await fetch('http://localhost:8000/token', {
+                const response = await fetch(API_URL + '/token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -702,7 +704,7 @@
                 let response;
                 if (editingSerial) {
                     // Update existing record
-                    response = await fetch(`http://localhost:8000/inventory/${editingSerial}`, {
+                    response = await fetch(`${API_URL}/inventory/${editingSerial}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -712,7 +714,7 @@
                     });
                 } else {
                     // Add new record
-                    response = await fetch('http://localhost:8000/inventory', {
+                    response = await fetch(API_URL + '/inventory', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -753,7 +755,7 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:8000/inventory/${serial}`, {
+                const response = await fetch(`${API_URL}/inventory/${serial}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${authToken}`

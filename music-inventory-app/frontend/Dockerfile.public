@@ -1,5 +1,5 @@
 # Public read-only frontend build
-FROM node:24-alpine AS build
+FROM node:25-alpine3.22 AS build
 
 WORKDIR /app
 

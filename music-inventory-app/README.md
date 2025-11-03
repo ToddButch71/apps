@@ -1,5 +1,7 @@
 # Music Inventory Application
 
+**Version 1.0.0**
+
 A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces, secured remote access via WireGuard VPN, and automated synchronization.
 
 ## 🎵 Features
@@ -344,7 +346,32 @@ docker compose up -d public-frontend
 - Check backend CORS configuration in `main.py`
 - Verify frontend URL matches allowed origins
 
-## 📝 License
+## � Versioning
+
+This project uses semantic versioning. The version is stored in the `VERSION` file at the root of the project.
+
+**Current Version:** 1.0.0
+
+### Checking Version
+```bash
+./get-version.sh
+```
+
+Or access the API endpoint:
+```bash
+curl http://localhost:8000/
+```
+
+### Updating Version
+1. Edit the `VERSION` file
+2. Update version in `frontend/package.json`
+3. Rebuild containers:
+   ```bash
+   docker compose build
+   docker compose up -d
+   ```
+
+## �📝 License
 
 [Your License Here]
 

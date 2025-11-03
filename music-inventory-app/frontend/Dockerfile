@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM node:25-alpine3.22 AS builder
 WORKDIR /app/frontend
 
 # COPY /package.json package-lock.json 
@@ -13,8 +13,9 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:1-alpine-slim
+FROM nginx:alpine
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 

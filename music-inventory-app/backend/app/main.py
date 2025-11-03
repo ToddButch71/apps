@@ -10,9 +10,21 @@ from .crud import (
 )
 from .auth import get_current_admin, create_token
 
+# Load version from VERSION file
+def get_version():
+    """Read version from VERSION file."""
+    version_file = Path(__file__).parent.parent.parent / 'VERSION'
+    try:
+        return version_file.read_text().strip()
+    except FileNotFoundError:
+        return "1.0.0"
+
+APP_VERSION = get_version()
+
 app = FastAPI(
     title="Music Inventory API",
     description="CRUD for music inventory, backed by the original JSON file.",
+    version=APP_VERSION,
 )
 
 # Configure logging for external access
@@ -76,7 +88,7 @@ def read_root():
     return {
         "app": "Music Inventory API",
         "status": "running",
-        "version": "1.0.0"
+        "version": APP_VERSION
     }
 
 @app.get("/health")
