@@ -30,6 +30,25 @@ A full-stack music catalog management system with Docker containerization, featu
 - **Auto-Sync**: File watcher automatically syncs changes from admin to public version
 - **Container Orchestration**: Fully dockerized with Docker Compose
 - **Health Monitoring**: Health check endpoints for all services
+- **Automated Versioning**: Semantic versioning with automated bump script
+
+## 📰 Recent Updates
+
+### Version 1.1.0 (Latest)
+- ✅ **Functional Realtime Indicator**: Replaced pulsating exclamation with color-coded sync status
+  - Green checkmark: Data is current (updated within 30 seconds)
+  - Blue pulse: Actively syncing
+  - Orange warning: Data may be stale
+  - Red error: Sync failed
+- ✅ **Public Frontend Cleanup**: Removed all login/authentication UI from public interface
+- ✅ **CORS Configuration**: Backend now accepts requests from all origins for better accessibility
+- ✅ **Docker Fixes**: Corrected Dockerfile configurations for reliable builds
+
+### Version 1.0.0
+- Initial release with full CRUD functionality
+- Dual interface architecture (admin + public)
+- WireGuard VPN integration
+- Automated file synchronization
 
 ## 🏗️ Architecture
 
@@ -57,15 +76,16 @@ A full-stack music catalog management system with Docker containerization, featu
 ### Technology Stack
 
 **Backend:**
-- FastAPI (Python 3.11)
+- FastAPI (Python 3.13-alpine)
 - JSON file-based storage
 - OAuth2 password bearer authentication
-- CORS middleware for cross-origin requests
+- CORS middleware (configured for all origins)
 
 **Frontend (Admin):**
 - Vite 7.1.12
 - React 18.2.0
 - TypeScript
+- Realtime sync status indicator (30-second refresh)
 - Nginx (production)
 
 **Frontend (Public):**
@@ -78,6 +98,7 @@ A full-stack music catalog management system with Docker containerization, featu
 - WireGuard VPN (wg-easy)
 - File system watcher with polling
 - Nginx reverse proxy
+- Automated version management with semantic versioning
 
 ## 📦 Installation
 
@@ -175,6 +196,13 @@ The file-watcher service automatically:
 2. Syncs to `frontend/index-public.html` (removes admin features)
 3. Rebuilds and restarts the public frontend
 
+The admin interface displays a realtime sync indicator that:
+- Shows green checkmark when data is current (updated within 30 seconds)
+- Shows blue "syncing" when actively checking
+- Shows orange warning if data is stale
+- Shows red error if sync fails
+- Auto-refreshes every 30 seconds
+
 **Manual sync:**
 ```bash
 ./sync-public.sh
@@ -253,11 +281,17 @@ music-inventory-app/
 │   └── .secrets.env         # WireGuard password hash
 ├── frontend/
 │   ├── index.html           # Admin interface
-│   ├── index-public.html    # Public interface
+│   ├── index-public.html    # Public interface (auto-synced)
 │   ├── Dockerfile           # Admin build
 │   └── Dockerfile-public    # Public build
 ├── wireguard/               # WireGuard configs (gitignored)
+├── scripts/                 # Utility scripts
+├── VERSION                  # Current version (semantic versioning)
+├── CHANGELOG.md             # Version history and changes
 ├── compose.yaml             # Docker Compose configuration
+├── bump-version.sh          # Automated version bumping
+├── get-version.sh           # Display current version
+├── clean-smb-files.sh       # Remove macOS SMB temp files
 ├── sync-public.sh           # Manual sync script
 ├── watch-sync-container.sh  # Auto-sync watcher
 ├── health_check.sh          # Health monitoring
@@ -306,6 +340,21 @@ docker compose up -d backend
 cp backend/data/music_inventory.json backup/music_inventory_$(date +%Y%m%d).json
 ```
 
+### Utility Scripts
+
+**Version Management:**
+- `./get-version.sh` - Display current version
+- `./bump-version.sh [major|minor|patch]` - Automated version bumping with CHANGELOG integration
+
+**Maintenance:**
+- `./health_check.sh` - Check health status of all services
+- `./clean-smb-files.sh` - Remove macOS SMB temporary files (.smbdelete*)
+- `./sync-public.sh` - Manually sync admin to public frontend
+
+**WireGuard Setup:**
+- `./setup_wireguard.sh` - Initial WireGuard VPN configuration
+- `./generate_wg_password_hash.sh` - Generate password hash for WireGuard UI
+
 ## 📊 API Endpoints
 
 ### Public Endpoints
@@ -343,35 +392,74 @@ docker compose up -d public-frontend
 - Regenerate hash if needed
 
 ### CORS errors
-- Check backend CORS configuration in `main.py`
+- Backend allows all origins by default (`allow_origins=["*"]`)
+- Check backend CORS configuration in `backend/app/main.py` if issues persist
 - Verify frontend URL matches allowed origins
 
-## � Versioning
+### macOS SMB temporary files
+```bash
+# Clean .smbdelete* files
+./clean-smb-files.sh
+```
 
-This project uses semantic versioning. The version is stored in the `VERSION` file at the root of the project.
+## 🔖 Versioning
+
+This project uses semantic versioning (MAJOR.MINOR.PATCH). The version is stored in the `VERSION` file at the root of the project and automatically synced to `README.md` and `frontend/package.json`.
 
 **Current Version:** 1.0.0
 
 ### Checking Version
+
+**Via script:**
 ```bash
 ./get-version.sh
 ```
 
-Or access the API endpoint:
+**Via API:**
 ```bash
 curl http://localhost:8000/
 ```
 
-### Updating Version
+**Via file:**
+```bash
+cat VERSION
+```
+
+### Updating Version (Automated)
+
+Use the `bump-version.sh` script to automatically update version across all files:
+
+```bash
+# Increment patch version (1.0.0 → 1.0.1)
+./bump-version.sh patch
+
+# Increment minor version (1.0.0 → 1.1.0)
+./bump-version.sh minor
+
+# Increment major version (1.0.0 → 2.0.0)
+./bump-version.sh major
+```
+
+The script will:
+1. Prompt you to update `CHANGELOG.md` with your changes
+2. Optionally open `CHANGELOG.md` in your editor
+3. Update `VERSION`, `README.md`, and `frontend/package.json`
+4. Display next steps for git commit and container rebuild
+
+### Manual Version Update
+
+If you prefer to update manually:
 1. Edit the `VERSION` file
-2. Update version in `frontend/package.json`
-3. Rebuild containers:
+2. Update version in `README.md` (line 3 and Versioning section)
+3. Update version in `frontend/package.json`
+4. Update `CHANGELOG.md` with your changes
+5. Rebuild containers:
    ```bash
    docker compose build
    docker compose up -d
    ```
 
-## �📝 License
+## 📝 License
 
 [Your License Here]
 
