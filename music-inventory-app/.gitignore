@@ -3,3 +3,7 @@ wireguard/
 
 # Backup files
 *.bak
+
+# macOS SMB temporary files
+.smbdelete*
+.smb*
