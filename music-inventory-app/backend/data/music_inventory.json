@@ -174,6 +174,78 @@
       "media_count": 2,
       "genre": "Metal",
       "notes": "Merch table purchase at the April 2025 Denver show. Bronze platters. Pre-signed by 4 of 5 members. Has Setlist from Tomas' drum set hand delivered by Jimmy the drum tech."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "The Roots",
+      "titles": [
+        "Do You Want More?!!!??!"
+      ],
+      "year": 2015,
+      "serial_number": "0254726129",
+      "media_count": 2,
+      "genre": "Hip Hop",
+      "notes": "2015 Okay Player re-release of the 1994 release. Double blue vinyl."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Black Sabbath ",
+      "titles": [
+        "Paranoid"
+      ],
+      "year": 1971,
+      "serial_number": "1887",
+      "media_count": 1,
+      "genre": "Rock",
+      "notes": "Purple vinyl. 180g re-issue"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "N.W.A.",
+      "titles": [
+        "Greatest Hits"
+      ],
+      "year": 2003,
+      "serial_number": "724354093210",
+      "media_count": 2,
+      "genre": "Hip Hop",
+      "notes": "180g vinyl re-issue"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "I"
+      ],
+      "year": 2014,
+      "serial_number": "2736134021",
+      "media_count": 1,
+      "genre": "Metal",
+      "notes": "LP was originally released in 2005. 243 of 300. Orange vinyl. Unopened."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Immutable"
+      ],
+      "year": 2022,
+      "serial_number": "251981700397",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Online pre-sale order. Dark red/Burgundy vinyl. "
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "The Violent Sleep of Reason"
+      ],
+      "year": 2016,
+      "serial_number": "2736134833",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Limited edition picture disks. Mimics album sleeve artwork. The sleeve is black matte, with glossy artwork and text"
     }
   ]
 }

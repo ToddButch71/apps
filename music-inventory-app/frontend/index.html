@@ -580,7 +580,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="latestYear">2024</div>
-                <div class="stat-label">Latest Release Year</div>
+                <div class="stat-label">Release Years</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="genreElectron">3</div>
@@ -1050,11 +1050,14 @@
 
         function updateStats() {
             const total = musicData.length;
-            const latestYear = Math.max(...musicData.map(item => item.year));
+            const years = musicData.map(item => item.year);
+            const oldestYear = Math.min(...years);
+            const latestYear = Math.max(...years);
+            const yearRange = `${oldestYear}-${latestYear}`;
             const electronCount = musicData.filter(item => item.genre === 'Electronic').length;
             
             document.getElementById('totalRecords').textContent = total;
-            document.getElementById('latestYear').textContent = latestYear;
+            document.getElementById('latestYear').textContent = yearRange;
             document.getElementById('genreElectron').textContent = electronCount;
         }
 

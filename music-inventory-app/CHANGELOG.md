@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-11-04
+
+### Changed
+- Updated "Latest Release Year" stat to "Release Years" showing year range (e.g., "1998-2025")
+- Modified stats calculation to display oldest-to-newest year range instead of just latest year
+- Updated both admin and public interfaces with new year range display
+
+### Removed
+- Removed all login/authentication UI elements from public interface (recurring cleanup)
+- Removed album add/edit modal dialog from public interface
+- Removed all form-related CSS (modal, buttons, form-group styles) from public interface
+- Ensured public interface is completely read-only with no edit/delete capabilities
+
 ## [1.1.1] - 2025-11-04
 
 ### Fixed

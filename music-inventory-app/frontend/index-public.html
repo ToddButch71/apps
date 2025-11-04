@@ -274,208 +274,9 @@
             padding: 30px;
             color: #64748b;
         }
-        
-        /* Login modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--secondary);
-        }
-        
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-            margin-left: 10px;
-        }
-        
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-        
-        .action-buttons {
-            display: none;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .action-buttons.show {
-            display: flex;
-        }
-        
-        .btn-add {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-add:hover {
-            background: #059669;
-        }
-        
-        .btn-edit {
-            background: #3b82f6;
-            color: white;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-            margin-right: 4px;
-        }
-        
-        .btn-edit:hover {
-            background: #2563eb;
-        }
-        
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-        }
-        
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-        
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
     </style>
 </head>
 <body>
-    <!-- Add/Edit Album Modal -->
-    <div id="albumModal" class="modal">
-        <div class="modal-content">
-            <h2 id="albumModalTitle">Add New Album</h2>
-            <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
-                <div class="form-group">
-                    <label for="albumMedia">Media Type:</label>
-                    <select id="albumMedia" required>
-                        <option value="">Select media type</option>
-                        <option value="CD">CD</option>
-                        <option value="DVD">DVD</option>
-                        <option value="Vinyl">Vinyl</option>
-                        <option value="Digital">Digital</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="albumArtist">Artist:</label>
-                    <input type="text" id="albumArtist" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumTitle">Album Title:</label>
-                    <input type="text" id="albumTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumYear">Year Released:</label>
-                    <input type="number" id="albumYear" min="1900" max="2100" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumSerial">ISRC Code:</label>
-                    <input type="text" id="albumSerial" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumMediaCount">Media Count:</label>
-                    <input type="number" id="albumMediaCount" min="1" value="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumGenre">Genre:</label>
-                    <input type="text" id="albumGenre" list="genreList" required placeholder="Select or type a genre">
-                    <datalist id="genreList">
-                        <option value="Electronic">
-                        <option value="Metal">
-                        <option value="Hip Hop">
-                        <option value="Rock">
-                        <option value="Jazz">
-                        <option value="Classical">
-                        <option value="Pop">
-                        <option value="Country">
-                        <option value="R&B">
-                        <option value="Blues">
-                        <option value="Reggae">
-                        <option value="Punk">
-                        <option value="Indie">
-                        <option value="Folk">
-                        <option value="Other">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label for="albumNotes">Notes (optional):</label>
-                    <textarea id="albumNotes" rows="3" placeholder="Add any notes about this album..."></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary" id="albumSubmitBtn">Add Album</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeAlbumModal()">Cancel</button>
-                </div>
-                <div id="albumError" style="color: red; margin-top: 10px; display: none;"></div>
-            </form>
-        </div>
-    </div>
-
     <div class="container">
         <header>
             <h1>Music Inventory</h1>
@@ -753,11 +554,14 @@
 
         function updateStats() {
             const total = musicData.length;
-            const latestYear = Math.max(...musicData.map(item => item.year));
+            const years = musicData.map(item => item.year);
+            const oldestYear = Math.min(...years);
+            const latestYear = Math.max(...years);
+            const yearRange = `${oldestYear}-${latestYear}`;
             const electronCount = musicData.filter(item => item.genre === 'Electronic').length;
             
             document.getElementById('totalRecords').textContent = total;
-            document.getElementById('latestYear').textContent = latestYear;
+            document.getElementById('latestYear').textContent = yearRange;
             document.getElementById('genreElectron').textContent = electronCount;
         }
 
