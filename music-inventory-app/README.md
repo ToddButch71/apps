@@ -1,6 +1,6 @@
 # Music Inventory Application
 
-**Version 1.0.0**
+**Version 1.1.1**
 
 A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces, secured remote access via WireGuard VPN, and automated synchronization.
 
@@ -406,7 +406,7 @@ docker compose up -d public-frontend
 
 This project uses semantic versioning (MAJOR.MINOR.PATCH). The version is stored in the `VERSION` file at the root of the project and automatically synced to `README.md` and `frontend/package.json`.
 
-**Current Version:** 1.0.0
+**Current Version:** 1.1.1
 
 ### Checking Version
 

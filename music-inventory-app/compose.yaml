@@ -17,7 +17,7 @@ services:
     depends_on: [backend]
     environment:
       - VITE_API_URL=http://backend:8000
-      - VIRTUAL_HOST=localhost
+      - VIRTUAL_HOST=localhost,10.19.71.122
       - VIRTUAL_PORT=80
     ports:
       - "5173:80"

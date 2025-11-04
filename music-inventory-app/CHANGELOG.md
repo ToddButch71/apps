@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-11-04
+
+### Fixed
+- CORS configuration now allows all origins (`allow_origins=["*"]`) to fix 403 errors when accessing by IP address
+- Resolved 503 error when accessing nginx-proxy via IP address (added IP to VIRTUAL_HOST)
+- Backend now properly handles requests from any network origin
+
+### Changed
+- Updated all "Serial Number" labels to "ISRC Code" in admin interface (`index.html`)
+- Updated all "Serial Number" labels to "ISRC Code" in public interface (`index-public.html`)
+- Changed search placeholder text from "serial number" to "ISRC code"
+- Updated table headers from "Serial Number" to "ISRC Code"
 
 ## [1.1.0] - 2025-11-03
 

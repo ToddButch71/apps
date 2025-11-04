@@ -99,11 +99,7 @@ def health_check():
 # Allow frontend origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # Vite dev server
-        "http://localhost:8080",  # nginx-proxy
-        "http://localhost:9000"   # public frontend
-    ],
+    allow_origins=["*"],  # Allow all origins for better accessibility
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
