@@ -7,10 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [1.1.0] - 2025-11-03
- 
+
+### Added
+- Automated CHANGELOG.md updates: `bump-version.sh` now automatically inserts version templates
+- Comprehensive utility scripts documentation in README.md
+- Recent Updates section in README.md highlighting latest features
+
 ### Changed
-- The pulsating exclamation point is now a green check or red x, updated every 30 seconds showing data is current.
-- Removed the login button from the public facing page.
+- Realtime indicator now shows functional sync status with color-coded states (green/blue/orange/red)
+- Public frontend cleaned up: removed all login/authentication UI elements
+- CORS configuration now allows all origins for better accessibility
+- `bump-version.sh` automatically updates VERSION, README.md, package.json, and CHANGELOG.md
+- Improved version management workflow with automated file updates
+
+### Fixed
+- Backend Dockerfile: corrected Python version to 3.13-alpine (was incorrectly set to 3.14)
+- Frontend Dockerfile: removed reference to non-existent nginx.conf file
+- Docker build failures resolved for both backend and frontend containers
+- README.md now accurately reflects Python 3.13-alpine in Technology Stack
+- Duplicate versioning sections removed from README.md
 
 ## [1.0.0] - 2025-11-03
 
@@ -45,36 +60,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## How to Update This File
 
-When bumping versions using `./bump-version.sh`, update this file with:
+The `./bump-version.sh` script **automatically** inserts version templates into this file.
 
-### For Patch Releases (bug fixes)
-```markdown
-## [X.Y.Z] - YYYY-MM-DD
+### Automatic Process
 
-### Fixed
-- Bug description
-```
+When you run `./bump-version.sh [patch|minor|major]`, it will:
 
-### For Minor Releases (new features)
-```markdown
-## [X.Y.0] - YYYY-MM-DD
+1. **Automatically insert** a new version entry at the top with the appropriate template:
+   - **Patch** (bug fixes): Adds `### Fixed` section
+   - **Minor** (new features): Adds `### Added` and `### Changed` sections  
+   - **Major** (breaking changes): Adds `### Changed` (BREAKING) and `### Removed` sections
 
-### Added
-- New feature description
+2. **Prompt you** to edit the file and replace placeholder text with your actual changes
 
-### Changed
-- Modified feature description
-```
+3. The template format:
+   ```markdown
+   ## [X.Y.Z] - YYYY-MM-DD
+   
+   ### Section Header
+   - Your description here
+   ```
 
-### For Major Releases (breaking changes)
-```markdown
-## [X.0.0] - YYYY-MM-DD
+### Manual Updates (if needed)
 
-### Changed
-- BREAKING: Description of breaking change
+You can also manually edit this file following the same format. The script will still work on your next version bump.
 
-### Removed
-- Deprecated feature removed
-```
+---
 
+[1.1.0]: https://github.com/ToddButch71/apps/releases/tag/v1.1.0
 [1.0.0]: https://github.com/ToddButch71/apps/releases/tag/v1.0.0
