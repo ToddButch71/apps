@@ -15,16 +15,18 @@ A full-stack music catalog management system with Docker containerization, featu
 - Music catalog management with CRUD operations (admin interface)
 - Public read-only catalog interface for sharing your collection
 - Real-time search and filtering across all fields
+- ISRC code tracking with support for alphanumeric codes
+- Year range statistics displaying collection span (e.g., "1998-2025")
 - FastAPI backend with JSON file storage
 - React/Vite admin frontend with authentication
-- Static HTML public frontend
+- Static HTML public frontend (strictly read-only, no login/edit capabilities)
 - Docker Compose orchestration
 - WireGuard VPN integration for secure remote access
 - Automated file synchronization between admin and public versions
 - Support for multiple media types (CD, DVD, Vinyl, Digital)
 - Genre classification and statistics
-- ISRC code tracking
 - Multi-disc support
+- Network access via IP address with universal CORS support
 
 **Tech Stack:**
 - Backend: FastAPI (Python 3.13-alpine)

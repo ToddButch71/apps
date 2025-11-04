@@ -7,15 +7,16 @@ A full-stack music catalog management system with Docker containerization, featu
 ## 🎵 Features
 
 ### Core Functionality
-- **Music Catalog Management**: Track albums by media type, artist, title, year, serial number, media count, genre, and notes
+- **Music Catalog Management**: Track albums by media type, artist, title, year, ISRC code, media count, genre, and notes
 - **Real-time Search**: Instant filtering across all fields
 - **Dual Interfaces**:
   - **Admin Version** (localhost:5173 or localhost:8080): Full CRUD operations with authentication
   - **Public Version** (localhost:9000): Read-only catalog for public sharing (no authentication)
 - **Genre Classification**: Categorized music collection
 - **Media Type Display**: Media types displayed in lowercase (cd, dvd, vinyl)
-- **Flexible Serial Numbers**: Support for both numeric (676127505326) and alphanumeric (WIGLP456, v-8645) serial numbers
+- **ISRC Code Tracking**: Support for both numeric (676127505326) and alphanumeric (WIGLP456, v-8645) ISRC codes
 - **Multi-disc Support**: Track albums with multiple discs/media
+- **Year Range Statistics**: Display collection year range from oldest to newest album
 
 ### Security & Access
 - **User Authentication**: Token-based auth for admin users (admin/toddb only)
@@ -34,7 +35,17 @@ A full-stack music catalog management system with Docker containerization, featu
 
 ## 📰 Recent Updates
 
-### Version 1.1.0 (Latest)
+### Version 1.1.2 (Latest)
+- ✅ **Year Range Display**: Updated stats to show collection year range (e.g., "1998-2025") instead of just latest year
+- ✅ **Enhanced Public Interface**: Further cleanup to ensure public interface remains strictly read-only
+- ✅ **Removed Recurring Elements**: Eliminated all modal dialogs and form elements from public interface
+
+### Version 1.1.1
+- ✅ **ISRC Code Labels**: Changed all "Serial Number" labels to "ISRC Code" throughout both interfaces
+- ✅ **Network Access Fixed**: Resolved CORS and nginx-proxy 503 errors when accessing by IP address
+- ✅ **Universal CORS**: Backend now accepts requests from all origins for better accessibility
+
+### Version 1.1.0
 - ✅ **Functional Realtime Indicator**: Replaced pulsating exclamation with color-coded sync status
   - Green checkmark: Data is current (updated within 30 seconds)
   - Blue pulse: Actively syncing
@@ -180,7 +191,7 @@ docker compose up -d
 
 ### CLI Tool
 
-Update inventory via command line with alphanumeric serial numbers:
+Update inventory via command line with alphanumeric ISRC codes:
 ```bash
 python update_inventory.py --media CD --artist "Artist Name" \
   --title "Album Title" --year 2024 --serial ABC123 \
@@ -365,8 +376,8 @@ cp backend/data/music_inventory.json backup/music_inventory_$(date +%Y%m%d).json
 
 ### Protected Endpoints (Requires Auth)
 - `POST /inventory` - Add new album
-- `PUT /inventory/{serial}` - Update album
-- `DELETE /inventory/{serial}` - Delete album
+- `PUT /inventory/{isrc}` - Update album by ISRC code
+- `DELETE /inventory/{isrc}` - Delete album by ISRC code
 
 ## 🐛 Troubleshooting
 
@@ -395,6 +406,13 @@ docker compose up -d public-frontend
 - Backend allows all origins by default (`allow_origins=["*"]`)
 - Check backend CORS configuration in `backend/app/main.py` if issues persist
 - Verify frontend URL matches allowed origins
+
+### 503 errors when accessing by IP address
+- Use direct service ports instead of nginx-proxy (port 8080):
+  - Admin: `http://YOUR_IP:5173`
+  - Public: `http://YOUR_IP:9000`
+  - Backend: `http://YOUR_IP:8000`
+- Or add your IP to `VIRTUAL_HOST` in `compose.yaml` for nginx-proxy support
 
 ### macOS SMB temporary files
 ```bash
