@@ -246,6 +246,66 @@
       "media_count": 2,
       "genre": "Metal",
       "notes": "Limited edition picture disks. Mimics album sleeve artwork. The sleeve is black matte, with glossy artwork and text"
+    },
+    {
+      "media": "CD",
+      "artist": "Gorjia",
+      "titles": [
+        "From Mars to Sirius"
+      ],
+      "year": 2005,
+      "serial_number": "712725730569",
+      "media_count": 1,
+      "genre": "Metal",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "Nine Inch Nails ",
+      "titles": [
+        "With Teeth"
+      ],
+      "year": 2005,
+      "serial_number": "0249881354",
+      "media_count": 1,
+      "genre": "Rock",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "NaS",
+      "titles": [
+        "Life is Good"
+      ],
+      "year": 2012,
+      "serial_number": "0253707750",
+      "media_count": 1,
+      "genre": "Hip Hop",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "Ol\u2019 Dirty Bastard",
+      "titles": [
+        "Return to the 36 Chambers: The Dirty Version"
+      ],
+      "year": 1995,
+      "serial_number": "7559616592",
+      "media_count": 1,
+      "genre": "Hip Hop",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "N.E.R.D.",
+      "titles": [
+        "Nothing"
+      ],
+      "year": 2010,
+      "serial_number": "0252740743",
+      "media_count": 1,
+      "genre": "Hip Hop",
+      "notes": ""
     }
   ]
 }

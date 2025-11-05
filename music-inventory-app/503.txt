@@ -1,0 +1,269 @@
+=== Docker Container Status ===
+NAME                                    IMAGE                                 COMMAND                  SERVICE           CREATED          STATUS                 PORTS
+file-watcher                            music-inventory-app-file-watcher      "docker-entrypoint.s…"   file-watcher      3 hours ago      Up 3 hours             
+music-inventory-app-backend-1           music-inventory-app-backend           "uvicorn app.main:ap…"   backend           3 hours ago      Up 3 hours             0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+music-inventory-app-frontend-1          music-inventory-app-frontend          "/docker-entrypoint.…"   frontend          18 minutes ago   Up 18 minutes          0.0.0.0:5173->80/tcp, [::]:5173->80/tcp
+music-inventory-app-public-frontend-1   music-inventory-app-public-frontend   "/docker-entrypoint.…"   public-frontend   18 minutes ago   Up 18 minutes          0.0.0.0:9000->80/tcp, [::]:9000->80/tcp
+nginx-proxy                             jwilder/nginx-proxy                   "/app/docker-entrypo…"   nginx-proxy       3 hours ago      Up 3 hours             0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+wg-easy                                 ghcr.io/wg-easy/wg-easy               "docker-entrypoint.s…"   wireguard         3 hours ago      Up 3 hours (healthy)   0.0.0.0:51820->51820/udp, [::]:51820->51820/udp, 0.0.0.0:51821->51821/tcp, [::]:51821->51821/tcp
+
+=== Backend Container Logs (last 30 lines) ===
+backend-1  | INFO:     172.65.32.248:56814 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:28453 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:28453 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:33775 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:56954 - "POST /token HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     172.65.32.248:21235 - "POST /token HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     172.65.32.248:21235 - "POST /token HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     172.65.32.248:21235 - "POST /token HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     172.65.32.248:43744 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:27629 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:61055 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:44021 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:47023 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:40925 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:37843 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:54321 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:38299 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:47377 - "POST /token HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:55423 - "POST /token HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:28463 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:61000 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:19734 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:25820 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:16735 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:29251 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:44981 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:47322 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.22.0.5:59262 - "GET /health HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:50538 - "GET /inventory HTTP/1.1" 200 OK
+backend-1  | INFO:     172.65.32.248:39444 - "GET /inventory HTTP/1.1" 200 OK
+
+=== Nginx Proxy Logs (last 30 lines) ===
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 100 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 101 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 102 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 29 (SIGIO) received
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 17 (SIGCHLD) received from 102
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 95 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 29 (SIGIO) received
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 17 (SIGCHLD) received from 96
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 96 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 104 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 29 (SIGIO) received
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 17 (SIGCHLD) received from 98
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 97 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 98 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 99 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 29 (SIGIO) received
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 17 (SIGCHLD) received from 103
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: worker process 103 exited with code 0
+nginx-proxy  | [0m[0;33;1mnginx.1     | 2025/11/04 00:19:40 [notice] 20#20: signal 29 (SIGIO) received
+nginx-proxy  | [0m[0;36;1mdockergen.1 | 2025/11/04 00:19:40 Contents of /etc/nginx/conf.d/default.conf did not change. Skipping notification 'nginx -s reload'
+nginx-proxy  | [0m[0;33;1mnginx.1     | [0mlocalhost 172.65.32.248 - - [04/Nov/2025:00:20:05 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.22.0.5:80"
+nginx-proxy  | [0;33;1mnginx.1     | [0m10.19.71.122 172.65.32.248 - - [04/Nov/2025:00:24:52 +0000] "GET / HTTP/1.1" 503 190 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "-"
+nginx-proxy  | [0;33;1mnginx.1     | [0m10.19.71.122 172.65.32.248 - - [04/Nov/2025:00:25:04 +0000] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 503 190 "-" "com.apple.WebKit.Networking/20622.1.22.118.4 Network/4277.140.33.701.1 macOS/15.7.1" "-"
+nginx-proxy  | [0;33;1mnginx.1     | [0m10.19.71.122 172.65.32.248 - - [04/Nov/2025:00:25:04 +0000] "GET /favicon.ico HTTP/1.1" 503 190 "-" "com.apple.WebKit.Networking/20622.1.22.118.4 Network/4277.140.33.701.1 macOS/15.7.1" "-"
+nginx-proxy  | [0;33;1mnginx.1     | [0m10.19.71.122 172.65.32.248 - - [04/Nov/2025:00:25:04 +0000] "GET /apple-touch-icon.png HTTP/1.1" 503 190 "-" "com.apple.WebKit.Networking/20622.1.22.118.4 Network/4277.140.33.701.1 macOS/15.7.1" "-"
+nginx-proxy  | [0;33;1mnginx.1     | [0m10.19.71.122 172.65.32.248 - - [04/Nov/2025:00:25:04 +0000] "GET / HTTP/1.1" 503 190 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0" "-"
+nginx-proxy  | [0;33;1mnginx.1     | [0mlocalhost 172.65.32.248 - - [04/Nov/2025:00:33:15 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.22.0.5:80"
+nginx-proxy  | [0;33;1mnginx.1     | [0mlocalhost 172.65.32.248 - - [04/Nov/2025:00:33:15 +0000] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 153 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari" "172.22.0.5:80"
+nginx-proxy  | [0;33;1mnginx.1     | [0mlocalhost 172.65.32.248 - - [04/Nov/2025:00:33:16 +0000] "GET /apple-touch-icon.png HTTP/1.1" 404 153 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari" "172.22.0.5:80"
+nginx-proxy  | [0;33;1mnginx.1     | [0mlocalhost 172.65.32.248 - - [04/Nov/2025:00:35:26 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.22.0.5:80"
+
+=== Frontend Container Logs (last 30 lines) ===
+frontend-1  | /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+frontend-1  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+frontend-1  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+frontend-1  | /docker-entrypoint.sh: Configuration complete; ready for start up
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: using the "epoll" event method
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: nginx/1.29.3
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: built by gcc 14.2.0 (Alpine 14.2.0) 
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: OS: Linux 6.10.14-linuxkit
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker processes
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 30
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 31
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 32
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 33
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 34
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 35
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 36
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 37
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 38
+frontend-1  | 2025/11/04 00:19:40 [notice] 1#1: start worker process 39
+frontend-1  | 172.22.0.3 - - [04/Nov/2025:00:20:05 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.65.32.248"
+frontend-1  | 172.65.32.248 - - [04/Nov/2025:00:32:36 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "-"
+frontend-1  | 172.65.32.248 - - [04/Nov/2025:00:32:36 +0000] "GET /favicon.ico HTTP/1.1" 404 153 "http://10.19.71.122:5173/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "-"
+frontend-1  | 2025/11/04 00:32:36 [error] 31#31: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.65.32.248, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "10.19.71.122:5173", referrer: "http://10.19.71.122:5173/"
+frontend-1  | 172.22.0.3 - - [04/Nov/2025:00:33:15 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.65.32.248"
+frontend-1  | 2025/11/04 00:33:15 [error] 33#33: *4 open() "/usr/share/nginx/html/apple-touch-icon-precomposed.png" failed (2: No such file or directory), client: 172.22.0.3, server: localhost, request: "GET /apple-touch-icon-precomposed.png HTTP/1.1", host: "localhost"
+frontend-1  | 172.22.0.3 - - [04/Nov/2025:00:33:15 +0000] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 153 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari" "172.65.32.248"
+frontend-1  | 2025/11/04 00:33:16 [error] 33#33: *4 open() "/usr/share/nginx/html/apple-touch-icon.png" failed (2: No such file or directory), client: 172.22.0.3, server: localhost, request: "GET /apple-touch-icon.png HTTP/1.1", host: "localhost"
+frontend-1  | 172.22.0.3 - - [04/Nov/2025:00:33:16 +0000] "GET /apple-touch-icon.png HTTP/1.1" 404 153 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari" "172.65.32.248"
+frontend-1  | 172.22.0.3 - - [04/Nov/2025:00:35:26 +0000] "GET / HTTP/1.1" 200 38221 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15" "172.65.32.248"
+
+=== Check if Backend is Listening ===
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      1/python3.14
+tcp        0      0 127.0.0.11:35297        0.0.0.0:*               LISTEN      -
+
+=== Test Backend from Nginx Container ===
+OCI runtime exec failed: exec failed: unable to start container process: exec: "wget": executable file not found in $PATH: unknown
+Failed to reach backend from nginx
+
+=== Test Backend from Frontend Container ===
+Connecting to backend:8000 (172.22.0.4:8000)
+{"status":"healthy"}writing to stdout
+-                    100% |********************************|    20  0:00:00 ETA
+written to stdout
+
+=== Docker Network Inspection ===
+39cab62503bc   music-inventory-app_default    bridge    local
+
+=== Check VIRTUAL_HOST configuration ===
+# nginx-proxy version : 1.9.0
+# Networks available to the container labeled "com.github.nginx-proxy.nginx-proxy.nginx" or the one running docker-gen
+# (which are assumed to match the networks available to the container running nginx):
+#     music-inventory-app_default
+map $proxy_add_x_forwarded_for $proxy_x_forwarded_for {
+    default $proxy_add_x_forwarded_for;
+    '' $remote_addr;
+}
+# If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
+# scheme used to connect to this server
+map $http_x_forwarded_proto $proxy_x_forwarded_proto {
+    default $http_x_forwarded_proto;
+    '' $scheme;
+}
+map $http_x_forwarded_host $proxy_x_forwarded_host {
+    default $http_x_forwarded_host;
+    '' $host;
+}
+# If we receive X-Forwarded-Port, pass it through; otherwise, pass along the
+# server port the client connected to
+map $http_x_forwarded_port $_proxy_x_forwarded_port {
+    default $http_x_forwarded_port;
+}
+map $_proxy_x_forwarded_port $proxy_x_forwarded_port {
+    default $_proxy_x_forwarded_port;
+    '' $server_port;
+}
+# Include the port in the Host header sent to the container if it is non-standard
+map $server_port $host_port {
+    default :$server_port;
+    80 '';
+    443 '';
+}
+# If the request from the downstream client has an "Upgrade:" header (set to any
+# non-empty value), pass "Connection: upgrade" to the upstream (backend) server.
+# Otherwise, the value for the "Connection" header depends on whether the user
+# has enabled keepalive to the upstream server.
+map $http_upgrade $proxy_connection {
+    default upgrade;
+    '' $proxy_connection_noupgrade;
+}
+map $upstream_keepalive $proxy_connection_noupgrade {
+    # Preserve nginx's default behavior (send "Connection: close").
+    default close;
+    # Use an empty string to cancel nginx's default behavior.
+    true '';
+}
+# Abuse the map directive (see <https://stackoverflow.com/q/14433309>) to ensure
+# that $upstream_keepalive is always defined.  This is necessary because:
+#   - The $proxy_connection variable is indirectly derived from
+#     $upstream_keepalive, so $upstream_keepalive must be defined whenever
+#     $proxy_connection is resolved.
+#   - The $proxy_connection variable is used in a proxy_set_header directive in
+#     the http block, so it is always fully resolved for every request -- even
+#     those where proxy_pass is not used (e.g., unknown virtual host).
+map "" $upstream_keepalive {
+    # The value here should not matter because it should always be overridden in
+    # a location block (see the "location" template) for all requests where the
+    # value actually matters.
+    default false;
+}
+# Apply fix for very long server names
+server_names_hash_bucket_size 128;
+# Default dhparam
+ssl_dhparam /etc/nginx/dhparam/dhparam.pem;
+# Set appropriate X-Forwarded-Ssl header based on $proxy_x_forwarded_proto
+map $proxy_x_forwarded_proto $proxy_x_forwarded_ssl {
+    default off;
+    https on;
+}
+gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+log_format vhost escape=default '$host $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$upstream_addr"';
+access_log off;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305';
+    ssl_prefer_server_ciphers off;
+error_log /dev/stderr;
+resolver 127.0.0.11;
+# HTTP 1.1 support
+proxy_http_version 1.1;
+proxy_set_header Host $host$host_port;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection $proxy_connection;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_x_forwarded_for;
+proxy_set_header X-Forwarded-Host $proxy_x_forwarded_host;
+proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+proxy_set_header X-Forwarded-Ssl $proxy_x_forwarded_ssl;
+proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
+proxy_set_header X-Original-URI $request_uri;
+# Mitigate httpoxy attack (see README for details)
+proxy_set_header Proxy "";
+server {
+    server_name _; # This is just an invalid value which will never trigger on a real hostname.
+    server_tokens off;
+    access_log /var/log/nginx/access.log vhost;
+    http2 on;
+    listen 80;
+    listen 443 ssl;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+    # No default certificate found, so reject SSL handshake;
+    ssl_reject_handshake on;
+    location ^~ / {
+        return 503;
+    }
+}
+# localhost/
+upstream localhost {
+    # Container: music-inventory-app-frontend-1
+    #     networks:
+    #         music-inventory-app_default (reachable)
+    #     IPv4 address: 172.22.0.5
+    #     IPv6 address: (none usable)
+    #     exposed ports (first ten): 80/tcp
+    #     default port: 80
+    #     using port: 80
+    #         /!\ WARNING: Virtual port published on host.  Clients
+    #                      might be able to bypass nginx-proxy and
+    #                      access the container's server directly.
+    server 172.22.0.5:80;
+    keepalive 2;
+}
+server {
+    server_name localhost;
+    access_log /var/log/nginx/access.log vhost;
+    http2 on;
+    listen 80;
+    location /.well-known/acme-challenge/ {
+        auth_basic off;
+        auth_request off;
+        allow all;
+        root /usr/share/nginx/html;
+        try_files $uri =404;
+        break;
+    }
+    listen 443 ssl;
+    # No certificate for this vhost nor default certificate found, so reject SSL handshake.
+    ssl_reject_handshake on;
+    location / {
+        proxy_pass http://localhost;
+        set $upstream_keepalive true;
+    }
+}

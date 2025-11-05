@@ -130,6 +130,35 @@
             font-weight: 500;
         }
         
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 30px;
+        }
+        
+        th.sortable:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 10px;
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+        
+        th.sortable.asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+        
+        th.sortable.desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+        
         tbody tr {
             transition: all 0.2s;
             cursor: pointer;
@@ -556,13 +585,13 @@
             <table id="musicTable">
                 <thead>
                     <tr>
-                        <th>Media Type</th>
-                        <th>Artist</th>
-                        <th>Album Title</th>
-                        <th>Year Released</th>
+                        <th class="sortable" data-column="media">Media Type</th>
+                        <th class="sortable" data-column="artist">Artist</th>
+                        <th class="sortable" data-column="title">Album Title</th>
+                        <th class="sortable" data-column="year">Year Released</th>
                         <th>ISRC Code</th>
                         <th>Media Count</th>
-                        <th>Genre</th>
+                        <th class="sortable" data-column="genre">Genre</th>
                         <th>Notes</th>
                         <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
@@ -737,10 +766,10 @@
                 }
             }, 10000);
             
-            // Auto-refresh every 30 seconds to check for updates
+            // Auto-refresh every 12 hours to check for updates
             syncCheckInterval = setInterval(() => {
                 loadInventory();
-            }, 30000);
+            }, 43200000); // 12 hours in milliseconds
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -978,6 +1007,9 @@
             // Add search functionality
             setupSearch();
             
+            // Add sorting functionality
+            setupSorting();
+            
             // Add refresh button handler
             document.getElementById('refreshBtn').addEventListener('click', () => {
                 setTimeout(() => { 
@@ -990,11 +1022,86 @@
             updateStats();
         }
 
+        let currentSortColumn = 'artist';
+        let currentSortDirection = 'asc';
+
+        function setupSorting() {
+            const sortableHeaders = document.querySelectorAll('th.sortable');
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.column;
+                    
+                    // Toggle direction if clicking the same column
+                    if (currentSortColumn === column) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = column;
+                        currentSortDirection = 'asc';
+                    }
+                    
+                    // Update header classes
+                    sortableHeaders.forEach(h => {
+                        h.classList.remove('asc', 'desc');
+                    });
+                    header.classList.add(currentSortDirection);
+                    
+                    // Re-render table with new sort
+                    renderTable();
+                });
+            });
+            
+            // Set initial sort indicator on artist column
+            const artistHeader = document.querySelector('th[data-column="artist"]');
+            if (artistHeader) {
+                artistHeader.classList.add('asc');
+            }
+        }
+
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
-            musicData.forEach(item => {
+            // Sort data based on current sort settings
+            const sortedData = [...musicData].sort((a, b) => {
+                let aVal, bVal;
+                
+                switch(currentSortColumn) {
+                    case 'media':
+                        aVal = a.media.toLowerCase();
+                        bVal = b.media.toLowerCase();
+                        break;
+                    case 'artist':
+                        aVal = a.artist.toLowerCase();
+                        bVal = b.artist.toLowerCase();
+                        break;
+                    case 'title':
+                        aVal = a.titles[0].toLowerCase();
+                        bVal = b.titles[0].toLowerCase();
+                        break;
+                    case 'year':
+                        aVal = a.year;
+                        bVal = b.year;
+                        break;
+                    case 'genre':
+                        aVal = a.genre.toLowerCase();
+                        bVal = b.genre.toLowerCase();
+                        break;
+                    default:
+                        aVal = a.artist.toLowerCase();
+                        bVal = b.artist.toLowerCase();
+                }
+                
+                let comparison = 0;
+                if (typeof aVal === 'number') {
+                    comparison = aVal - bVal;
+                } else {
+                    comparison = aVal.localeCompare(bVal);
+                }
+                
+                return currentSortDirection === 'asc' ? comparison : -comparison;
+            });
+            
+            sortedData.forEach(item => {
                 const row = document.createElement('tr');
                 
                 // Format titles for display

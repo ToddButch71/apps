@@ -1,0 +1,23 @@
+Version 1.1.1 Changes:
+
+Fixed:
+- CORS configuration now allows all origins (changed from localhost-only to "*") to fix 403 errors when accessing by IP address
+- Updated "Serial Number" labels to "ISRC Code" throughout both admin and public interfaces
+- Added nginx-proxy virtual host configuration to support IP address access
+- Resolved 503 error when accessing application via IP address on port 8080
+
+Files Modified:
+- backend/app/main.py - Updated CORS allow_origins from localhost-only list to ["*"]
+- frontend/index.html - Changed all "Serial Number" labels to "ISRC Code" (3 locations)
+- frontend/index-public.html - Changed all "Serial Number" labels to "ISRC Code" (3 locations)
+- compose.yaml - Added IP address to VIRTUAL_HOST environment variable for nginx-proxy compatibility
+
+Technical Details:
+- Backend now accepts requests from any origin for better network accessibility
+- Label changes include: form field label, search placeholder text, and table header
+- Nginx-proxy configuration updated to route both localhost and IP-based requests
+
+To apply these changes:
+1. Run: ./bump-version.sh patch
+2. Rebuild containers: docker compose build
+3. Restart services: docker compose up -d
