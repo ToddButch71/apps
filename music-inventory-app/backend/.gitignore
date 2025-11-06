@@ -1,7 +1,7 @@
 # Ignore secrets file
 .secrets
 .secrets.env
-data/music_inventory.json
+
 # Ignore log files
 logs/
 *.log

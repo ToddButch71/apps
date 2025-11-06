@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-11-05
+
+### Added
+- Sortable table columns: Click column headers to sort by Media Type, Artist, Album Title, Year Released, or Genre
+- Visual sort indicators (⇅ unsorted, ↑ ascending, ↓ descending) on sortable column headers
+- Hover effects on sortable column headers for better UX
+- Support for both ascending and descending sort with toggle functionality
+
+### Changed
+- Default sort changed to Artist (alphabetically, ascending) instead of unsorted
+- Auto-refresh interval reduced from 30 seconds to 12 hours (43,200,000ms)
+- Table data now sorted alphabetically by artist on initial load
+- Sortable columns: Media Type, Artist, Album Title, Year Released, Genre
+- Non-sortable columns: ISRC Code, Media Count, Notes
+
 ## [1.1.2] - 2025-11-04
 
 ### Changed

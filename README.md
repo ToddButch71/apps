@@ -6,7 +6,7 @@ This repository contains various applications and tools developed by Todd Butche
 
 ### Music Inventory App
 
-**Version:** 1.1.2  
+**Version:** 1.1.3  
 **Location:** `/music-inventory-app`
 
 A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces.
