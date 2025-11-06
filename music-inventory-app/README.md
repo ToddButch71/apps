@@ -90,7 +90,7 @@ A full-stack music catalog management system with Docker containerization, featu
 - Vite 7.1.12
 - React 18.2.0
 - TypeScript
-- Realtime sync status indicator (30-second refresh)
+- Realtime sync status indicator (12-hour refresh)
 - Nginx (production)
 
 **Frontend (Public):**
