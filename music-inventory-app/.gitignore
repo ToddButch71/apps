@@ -7,3 +7,6 @@ wireguard/
 # macOS SMB temporary files
 .smbdelete*
 .smb*
+
+# To-do file
+music-inventory-app/TODO
