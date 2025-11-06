@@ -22,8 +22,8 @@ def get_version():
 APP_VERSION = get_version()
 
 app = FastAPI(
-    title="Music Inventory API",
-    description="CRUD for music inventory, backed by the original JSON file.",
+    title="Music Catalog API",
+    description="CRUD API for music catalog management with JSON file storage.",
     version=APP_VERSION,
 )
 
@@ -86,7 +86,7 @@ async def log_external_access(request: Request, call_next):
 def read_root():
     """API root showing version and status."""
     return {
-        "app": "Music Inventory API",
+        "app": "Music Catalog API",
         "status": "running",
         "version": APP_VERSION
     }

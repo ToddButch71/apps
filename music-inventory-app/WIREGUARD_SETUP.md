@@ -2,39 +2,32 @@
 
 ## Quick Setup
 
-1. **Run the setup script:**
+**Manual Configuration:**
+
+1. **Get your public IP:**
    ```bash
-   cd /Volumes/data/github/apps/music-inventory-app
-   chmod +x setup_wireguard.sh
-   ./setup_wireguard.sh
+   curl ifconfig.me
    ```
 
-2. **Generate password hash (recommended):**
+2. **Edit `compose.yaml`:**
+   - Replace `YOUR_PUBLIC_IP_OR_DOMAIN` with your public IP
+
+3. **Generate password hash:**
    ```bash
-   chmod +x generate_wg_password_hash.sh
-   ./generate_wg_password_hash.sh
+   docker run --rm ghcr.io/wg-easy/wg-easy wgpw YOUR_PASSWORD
    ```
-   This will convert your password to a secure bcrypt hash.
 
-3. **Or manually configure:**
-   - Get your public IP: `curl ifconfig.me`
-   - Edit `compose.yaml` and replace:
-     - `YOUR_PUBLIC_IP_OR_DOMAIN` with your public IP
-   - Generate password hash:
-     ```bash
-     docker run --rm ghcr.io/wg-easy/wg-easy wgpw YOUR_PASSWORD
-     ```
-   - Add hash to `backend/.secrets.env`:
-     ```
-     PASSWORD_HASH=your_generated_hash
-     ```
+4. **Create `backend/.secrets.env`:**
+   ```
+   PASSWORD_HASH=your_generated_hash
+   ```
 
-4. **Start WireGuard:**
+5. **Start WireGuard:**
    ```bash
    docker compose up -d wireguard
    ```
 
-5. **Access Web UI:**
+6. **Access Web UI:**
    - Local: http://localhost:51821
    - Login with your original password (not the hash)
 
@@ -94,7 +87,7 @@ After forwarding, access from anywhere: `http://YOUR_PUBLIC_IP:9000`
 - **iOS:** https://apps.apple.com/us/app/wireguard/id1441195209
 - **Android:** https://play.google.com/store/apps/details?id=com.wireguard.android
 
-## Accessing Your Music Inventory
+## Accessing Your Music Catalog
 
 ### Using Router's Existing VPN (Recommended):
 

@@ -4,44 +4,32 @@ This repository contains various applications and tools developed by Todd Butche
 
 ## Applications
 
-### Music Inventory App
+### Music Catalog
 
 **Version:** 1.1.3  
 **Location:** `/music-inventory-app`
 
-A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces.
+A containerized full-stack music catalog management system featuring dual interfaces: authenticated admin for full CRUD operations and public read-only catalog for sharing your collection.
 
 **Key Features:**
-- Music catalog management with CRUD operations (admin interface)
-- Public read-only catalog interface for sharing your collection
-- Real-time search and filtering across all fields
-- ISRC code tracking with support for alphanumeric codes
-- Year range statistics displaying collection span (e.g., "1998-2025")
-- FastAPI backend with JSON file storage
-- React/Vite admin frontend with authentication
-- Static HTML public frontend (strictly read-only, no login/edit capabilities)
-- Docker Compose orchestration
-- WireGuard VPN integration for secure remote access
-- Automated file synchronization between admin and public versions
-- Support for multiple media types (CD, DVD, Vinyl, Digital)
-- Genre classification and statistics
-- Multi-disc support
-- Network access via IP address with universal CORS support
+- Dual interfaces (private admin + public read-only)
+- Real-time search and sortable columns
+- ISRC code tracking, year range statistics, genre classification
+- FastAPI backend with React/Vite admin frontend
+- Docker Compose orchestration with automated sync
+- Optional WireGuard VPN integration for secure remote access
 
-**Tech Stack:**
-- Backend: FastAPI (Python 3.13-alpine)
-- Frontend: Vite + React (admin), Static HTML (public)
-- Infrastructure: Docker, Docker Compose, Nginx
-- VPN: WireGuard (wg-easy)
-- Data: JSON file-based storage
+**Tech Stack:** Python 3.13-alpine, FastAPI, React, Vite, Docker, Nginx
 
-**Access Points:**
-- Admin Interface: Port 5173 or 8080 (requires authentication)
-- Public Catalog: Port 9000 (read-only, no authentication)
-- Backend API: Port 8000
-- WireGuard VPN: Ports 51820 (UDP) and 51821 (TCP)
+**Quick Start:**
+```bash
+cd music-inventory-app
+docker compose up -d
+# Admin: http://localhost:5173
+# Public: http://localhost:9000
+```
 
-For detailed documentation, see [music-inventory-app/README.md](music-inventory-app/README.md)
+For complete documentation, setup instructions, and API reference, see [music-inventory-app/README.md](music-inventory-app/README.md)
 
 ---
 

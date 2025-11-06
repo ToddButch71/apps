@@ -25,8 +25,8 @@ sed -i '' '/<div class="action-buttons"/,/<\/div>/d' "$TARGET_FILE"
 sed -i '' 's/<th id="actionsHeader".*Actions<\/th>//g' "$TARGET_FILE"
 
 # Update page title
-sed -i '' 's/<title>Music Inventory - Realtime Search<\/title>/<title>Music Inventory - Public Catalog<\/title>/' "$TARGET_FILE"
-sed -i '' 's/<h1>Music Inventory<\/h1>/<h1>Music Inventory - Public Catalog<\/h1>/' "$TARGET_FILE"
+sed -i '' 's/<title>Music Catalog - Realtime Search<\/title>/<title>Music Catalog - Public<\/title>/' "$TARGET_FILE"
+sed -i '' 's/<h1>Music Catalog<\/h1>/<h1>Music Catalog - Public<\/h1>/' "$TARGET_FILE"
 
 # Remove auth-related CSS
 sed -i '' '/\.auth-status {/,/^[[:space:]]*}$/d' "$TARGET_FILE"

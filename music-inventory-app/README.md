@@ -1,4 +1,4 @@
-# Music Inventory Application
+# Music Catalog
 
 **Version 1.1.3**
 
@@ -35,10 +35,15 @@ A full-stack music catalog management system with Docker containerization, featu
 
 ## 📰 Recent Updates
 
-### Version 1.1.2 (Latest)
-- ✅ **Year Range Display**: Updated stats to show collection year range (e.g., "1998-2025") instead of just latest year
+### Version 1.1.3 (Latest)
+- ✅ **Sortable Columns**: Click column headers to sort by Media Type, Artist, Album Title, Year, or Genre
+- ✅ **Visual Sort Indicators**: Clear visual feedback (⇅ ↑ ↓) on sortable columns
+- ✅ **Default Alphabetical Sort**: Albums now sorted by artist alphabetically on load
+- ✅ **Extended Refresh Interval**: Auto-refresh reduced from 30 seconds to 12 hours for better performance
+
+### Version 1.1.2
+- ✅ **Year Range Display**: Shows collection year range (e.g., "1998-2025") instead of just latest year
 - ✅ **Enhanced Public Interface**: Further cleanup to ensure public interface remains strictly read-only
-- ✅ **Removed Recurring Elements**: Eliminated all modal dialogs and form elements from public interface
 
 ### Version 1.1.1
 - ✅ **ISRC Code Labels**: Changed all "Serial Number" labels to "ISRC Code" throughout both interfaces
@@ -46,20 +51,9 @@ A full-stack music catalog management system with Docker containerization, featu
 - ✅ **Universal CORS**: Backend now accepts requests from all origins for better accessibility
 
 ### Version 1.1.0
-- ✅ **Functional Realtime Indicator**: Replaced pulsating exclamation with color-coded sync status
-  - Green checkmark: Data is current (updated within 30 seconds)
-  - Blue pulse: Actively syncing
-  - Orange warning: Data may be stale
-  - Red error: Sync failed
+- ✅ **Functional Realtime Indicator**: Color-coded sync status (green/blue/orange/red)
 - ✅ **Public Frontend Cleanup**: Removed all login/authentication UI from public interface
-- ✅ **CORS Configuration**: Backend now accepts requests from all origins for better accessibility
 - ✅ **Docker Fixes**: Corrected Dockerfile configurations for reliable builds
-
-### Version 1.0.0
-- Initial release with full CRUD functionality
-- Dual interface architecture (admin + public)
-- WireGuard VPN integration
-- Automated file synchronization
 
 ## 🏗️ Architecture
 
@@ -207,12 +201,13 @@ The file-watcher service automatically:
 2. Syncs to `frontend/index-public.html` (removes admin features)
 3. Rebuilds and restarts the public frontend
 
-The admin interface displays a realtime sync indicator that:
-- Shows green checkmark when data is current (updated within 30 seconds)
-- Shows blue "syncing" when actively checking
-- Shows orange warning if data is stale
-- Shows red error if sync fails
-- Auto-refreshes every 30 seconds
+The admin interface displays a realtime sync indicator with color-coded status:
+- Green checkmark: Data is current
+- Blue pulse: Actively syncing
+- Orange warning: Data may be stale
+- Red error: Sync failed
+
+Auto-refresh interval: 12 hours
 
 **Manual sync:**
 ```bash
@@ -279,6 +274,7 @@ Configure your router to forward:
 ## 📁 Project Structure
 
 ```
+```
 music-inventory-app/
 ├── backend/
 │   ├── app/
@@ -288,25 +284,28 @@ music-inventory-app/
 │   ├── data/
 │   │   └── music_inventory.json  # Data storage
 │   ├── logs/                # Access logs
-│   ├── .secrets             # Admin credentials
-│   └── .secrets.env         # WireGuard password hash
+│   └── .secrets             # Admin credentials (gitignored)
 ├── frontend/
 │   ├── index.html           # Admin interface
 │   ├── index-public.html    # Public interface (auto-synced)
 │   ├── Dockerfile           # Admin build
 │   └── Dockerfile-public    # Public build
 ├── wireguard/               # WireGuard configs (gitignored)
-├── scripts/                 # Utility scripts
+├── scripts/                 # Health check utilities
 ├── VERSION                  # Current version (semantic versioning)
 ├── CHANGELOG.md             # Version history and changes
+├── VERSION_MANAGEMENT.md    # Version management guide
+├── WIREGUARD_SETUP.md       # WireGuard configuration guide
+├── README.md                # This file
 ├── compose.yaml             # Docker Compose configuration
-├── bump-version.sh          # Automated version bumping
-├── get-version.sh           # Display current version
+├── bump-version.sh          # Automated version & docs updater
+├── check-docs.sh            # Documentation consistency validator
 ├── clean-smb-files.sh       # Remove macOS SMB temp files
 ├── sync-public.sh           # Manual sync script
 ├── watch-sync-container.sh  # Auto-sync watcher
 ├── health_check.sh          # Health monitoring
 └── update_inventory.py      # CLI tool
+```
 
 ```
 
@@ -354,17 +353,13 @@ cp backend/data/music_inventory.json backup/music_inventory_$(date +%Y%m%d).json
 ### Utility Scripts
 
 **Version Management:**
-- `./get-version.sh` - Display current version
 - `./bump-version.sh [major|minor|patch]` - Automated version bumping with CHANGELOG integration
+- `./check-docs.sh` - Validate documentation consistency across all files
 
 **Maintenance:**
 - `./health_check.sh` - Check health status of all services
 - `./clean-smb-files.sh` - Remove macOS SMB temporary files (.smbdelete*)
 - `./sync-public.sh` - Manually sync admin to public frontend
-
-**WireGuard Setup:**
-- `./setup_wireguard.sh` - Initial WireGuard VPN configuration
-- `./generate_wg_password_hash.sh` - Generate password hash for WireGuard UI
 
 ## 📊 API Endpoints
 
@@ -422,31 +417,27 @@ docker compose up -d public-frontend
 
 ## 🔖 Versioning
 
-This project uses semantic versioning (MAJOR.MINOR.PATCH). The version is stored in the `VERSION` file at the root of the project and automatically synced to `README.md` and `frontend/package.json`.
+This project uses semantic versioning (MAJOR.MINOR.PATCH). The version is stored in the `VERSION` file and automatically synchronized across all documentation files using the `bump-version.sh` script.
 
 **Current Version:** 1.1.3
 
-### Checking Version
+For detailed version management workflows, see [VERSION_MANAGEMENT.md](VERSION_MANAGEMENT.md).
 
-**Via script:**
+### Quick Version Management
+
+**Check Documentation Consistency:**
 ```bash
-./get-version.sh
+./check-docs.sh
 ```
 
-**Via API:**
-```bash
-curl http://localhost:8000/
-```
+This validates that version numbers are consistent across:
+- `VERSION` file
+- `README.md` (app)
+- `../README.md` (repository root)
+- `frontend/package.json`
+- `CHANGELOG.md`
 
-**Via file:**
-```bash
-cat VERSION
-```
-
-### Updating Version (Automated)
-
-Use the `bump-version.sh` script to automatically update version across all files:
-
+**Bump Version (Automated):**
 ```bash
 # Increment patch version (1.0.0 → 1.0.1)
 ./bump-version.sh patch
@@ -458,24 +449,40 @@ Use the `bump-version.sh` script to automatically update version across all file
 ./bump-version.sh major
 ```
 
-The script will:
-1. Prompt you to update `CHANGELOG.md` with your changes
-2. Optionally open `CHANGELOG.md` in your editor
-3. Update `VERSION`, `README.md`, and `frontend/package.json`
-4. Display next steps for git commit and container rebuild
+The `bump-version.sh` script automatically:
+1. Updates version in all documentation files
+2. Updates or creates CHANGELOG.md entry
+3. Verifies all changes
+4. Provides next steps for git commit and Docker rebuild
+
+### Checking Version
+
+**Via API:**
+```bash
+curl http://localhost:8000/
+```
+
+**Via file:**
+```bash
+cat VERSION
+```
 
 ### Manual Version Update
 
-If you prefer to update manually:
+If you need to update manually (not recommended):
 1. Edit the `VERSION` file
-2. Update version in `README.md` (line 3 and Versioning section)
-3. Update version in `frontend/package.json`
-4. Update `CHANGELOG.md` with your changes
-5. Rebuild containers:
+2. Run `./check-docs.sh` to verify inconsistencies
+3. Update version in `README.md` (header and Versioning section)
+4. Update version in `../README.md` (Music Catalog section)
+5. Update version in `frontend/package.json`
+6. Update `CHANGELOG.md` with your changes
+7. Rebuild containers:
    ```bash
    docker compose build
    docker compose up -d
    ```
+
+**Recommended:** Use `./bump-version.sh` instead to avoid manual errors.
 
 ## 📝 License
 

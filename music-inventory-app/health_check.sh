@@ -1,10 +1,10 @@
 #!/bin/bash
-# Health check script for Music Inventory App
+# Health check script for Music Catalog
 
 set -e
 
 echo "======================================"
-echo "Music Inventory App Health Check"
+echo "Music Catalog Health Check"
 echo "======================================"
 echo ""
 

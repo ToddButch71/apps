@@ -6,7 +6,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 YELLOW='\033[1;33m'
 
-echo "🔍 Running Music Inventory App Health Checks..."
+echo "🔍 Running Music Catalog Health Checks..."
 
 # Function to check endpoint
 check_endpoint() {
