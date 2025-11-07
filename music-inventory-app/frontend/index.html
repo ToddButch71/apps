@@ -1161,11 +1161,14 @@
             const oldestYear = Math.min(...years);
             const latestYear = Math.max(...years);
             const yearRange = `${oldestYear}-${latestYear}`;
-            const electronCount = musicData.filter(item => item.genre === 'Electronic').length;
+            
+            // Calculate unique genres count
+            const uniqueGenres = new Set(musicData.map(item => item.genre));
+            const genreCount = uniqueGenres.size;
             
             document.getElementById('totalRecords').textContent = total;
             document.getElementById('latestYear').textContent = yearRange;
-            document.getElementById('genreElectron').textContent = electronCount;
+            document.getElementById('genreElectron').textContent = genreCount;
         }
 
         function setupSearch() {

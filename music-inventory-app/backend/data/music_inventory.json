@@ -306,6 +306,150 @@
       "media_count": 1,
       "genre": "Hip Hop",
       "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "N.E.R.D",
+      "titles": [
+        "Fly or Die"
+      ],
+      "year": 2004,
+      "serial_number": "243914570",
+      "media_count": 1,
+      "genre": "Hip Hop",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "The Neptunes",
+      "titles": [
+        "Present...Clones"
+      ],
+      "year": 2003,
+      "serial_number": "287653024",
+      "media_count": 2,
+      "genre": "Hip Hop",
+      "notes": "Limited edition CD, and DVD.\n"
+    },
+    {
+      "media": "CD",
+      "artist": "N.E.R.D",
+      "titles": [
+        "In Search Of..."
+      ],
+      "year": 2001,
+      "serial_number": "243811521",
+      "media_count": 1,
+      "genre": "Hip Hop",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "Ninja Tune",
+      "titles": [
+        "Ninja Cuts Funkunfusion"
+      ],
+      "year": 1998,
+      "serial_number": "2597810332",
+      "media_count": 2,
+      "genre": "Trip-hop",
+      "notes": "Purchased at the Ninja Tunes show at First Avenue in the fall of 2000."
+    },
+    {
+      "media": "CD",
+      "artist": "Various",
+      "titles": [
+        "Immortal Beloved Soundtrack "
+      ],
+      "year": 1994,
+      "serial_number": "746566301",
+      "media_count": 1,
+      "genre": "Classical",
+      "notes": "Possibly a Planet Hollywood give-away."
+    },
+    {
+      "media": "CD",
+      "artist": "Metallica",
+      "titles": [
+        "Wherever I May Roam"
+      ],
+      "year": 1992,
+      "serial_number": "4228666972",
+      "media_count": 1,
+      "genre": "Metal",
+      "notes": "UK import single. 3 tracks.  UK-METCD 9; INT-866697-2"
+    },
+    {
+      "media": "CD",
+      "artist": "Depeche Mode",
+      "titles": [
+        "Stripped"
+      ],
+      "year": 1991,
+      "serial_number": "6648301382",
+      "media_count": 1,
+      "genre": "synth-pop",
+      "notes": "Single German Import. 7 tracks "
+    },
+    {
+      "media": "CD",
+      "artist": "Pearl Jam",
+      "titles": [
+        "Jeremy"
+      ],
+      "year": 1992,
+      "serial_number": "099765818024",
+      "media_count": 1,
+      "genre": "Grunge",
+      "notes": "Maxi-single import from Austria. 3 tracks."
+    },
+    {
+      "media": "CD",
+      "artist": "Soundgarden",
+      "titles": [
+        "Black Hole Sun"
+      ],
+      "year": 1994,
+      "serial_number": "3145806232",
+      "media_count": 1,
+      "genre": "Grunge",
+      "notes": "maxi single import from Germany. 3 tracks. Jesus Christ Pose, and  Beyond The Wheel are live tracks."
+    },
+    {
+      "media": "CD",
+      "artist": "Towa Tei",
+      "titles": [
+        "Technova"
+      ],
+      "year": 1995,
+      "serial_number": "755966141",
+      "media_count": 1,
+      "genre": "Acid House",
+      "notes": ""
+    },
+    {
+      "media": "CD",
+      "artist": "Bjork",
+      "titles": [
+        "Possibly Maybe"
+      ],
+      "year": 1996,
+      "serial_number": "016958030728",
+      "media_count": 1,
+      "genre": "Electronic",
+      "notes": "maxi single. UK import. 4 tracks."
+    },
+    {
+      "media": "CD",
+      "artist": "Nine Inch Nails ",
+      "titles": [
+        "Year Zero "
+      ],
+      "year": 2007,
+      "serial_number": "B0008764-2",
+      "media_count": 1,
+      "genre": "Electro Rock",
+      "notes": ""
     }
   ]
 }

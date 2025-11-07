@@ -1,2 +1,12 @@
-* add sort A-Z, or Z-A to columns "Artist", "Album Title", and "Genre"
-* determine resource parameters for each service 
+# * determine resource parameters for each service 
+- min and max cpu
+- min and max mem
+- max pods
+# * design ux test for different browsers
+- firefox
+- Safari
+- Microsoft Edge
+# * ensure functionality for different devices
+- mobile
+- desktop
+- tablet
