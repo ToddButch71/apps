@@ -89,7 +89,7 @@
       "serial_number": "190295972967",
       "media_count": 2,
       "genre": "Metal",
-      "notes": ""
+      "notes": "Re-release"
     },
     {
       "media": "Vinyl",
@@ -450,6 +450,150 @@
       "media_count": 1,
       "genre": "Electro Rock",
       "notes": ""
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "The Violent Sleep of Reason"
+      ],
+      "year": 2016,
+      "serial_number": "2736134831",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Limited edition half and half two tone orange and blue."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Koloss"
+      ],
+      "year": 2012,
+      "serial_number": "2736123881",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Signed by Dick Lovgren, Jens Kidman, and Tomas Haake on May 13, 2012 outside of First Avenue."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Obzen"
+      ],
+      "year": 2008,
+      "serial_number": "2736119371",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Limited Edition red vinyls. Signed by Dick Lovgren, Jens Kidman, and Tomas Haake on May 13, 2012 outside of First Avenue."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Meshuggah",
+      "titles": [
+        "Obzen"
+      ],
+      "year": 2008,
+      "serial_number": "251981703794",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "2023 15th anniversary re-issue limited edition. Clear, Blue, white splatter. (2 copies) "
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Pharrell Williams",
+      "titles": [
+        "Piece by Piece "
+      ],
+      "year": 2024,
+      "serial_number": "9802855271",
+      "media_count": 2,
+      "genre": "Soundtrack",
+      "notes": "Solid yellow double vinyl."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Gojira",
+      "titles": [
+        "The Way of All Flesh"
+      ],
+      "year": 2008,
+      "serial_number": "760053844385",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Double picture disc, 1/1000 copies. Vinyl sleeve"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Tool",
+      "titles": [
+        "Lateralus"
+      ],
+      "year": 2001,
+      "serial_number": "1422311601",
+      "media_count": 2,
+      "genre": "Metal",
+      "notes": "Limited edition 2x full color picture disk. Unopened. (2000 Volcano Entertainment) "
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Beyonce",
+      "titles": [
+        "Actii Beyince"
+      ],
+      "year": 2024,
+      "serial_number": "19658899611",
+      "media_count": 2,
+      "genre": "R&B",
+      "notes": "Limited Edition, Red, Alternative Artwork - \"Blonde\" Cover"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Beyonce",
+      "titles": [
+        "Act i Renaissance"
+      ],
+      "year": 2022,
+      "serial_number": "19658719671",
+      "media_count": 2,
+      "genre": "R&B",
+      "notes": "Limited edition double 180g vinyl, 36 page booklet, collectable poster. Unopened."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Bjork",
+      "titles": [
+        "Salacious Crumb \"All is Full of Crumb\""
+      ],
+      "year": 2002,
+      "serial_number": "12",
+      "media_count": 1,
+      "genre": "Electronic",
+      "notes": "1 of 750. UK import. No label"
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Amon Tobin",
+      "titles": [
+        "Delpher Shutdown"
+      ],
+      "year": 2010,
+      "serial_number": "AT001A",
+      "media_count": 1,
+      "genre": "Electronic",
+      "notes": "1 of 500. First pressing of Monthly Joints."
+    },
+    {
+      "media": "Vinyl",
+      "artist": "Madonna",
+      "titles": [
+        "Music"
+      ],
+      "year": 2000,
+      "serial_number": "9362449235",
+      "media_count": 1,
+      "genre": "Dance",
+      "notes": "Picture disk. UK import."
     }
   ]
 }

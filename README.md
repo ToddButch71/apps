@@ -6,7 +6,7 @@ This repository contains various applications and tools developed by Todd Butche
 
 ### Music Catalog
 
-**Version:** 1.1.3  
+**Version:** 1.1.4  
 **Location:** `/music-inventory-app`
 
 A containerized full-stack music catalog management system featuring dual interfaces: authenticated admin for full CRUD operations and public read-only catalog for sharing your collection.
