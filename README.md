@@ -6,7 +6,7 @@ This repository contains various applications and tools developed by Todd Butche
 
 ### Music Catalog
 
-**Version:** 1.1.4  
+**Version:** 1.2.0  
 **Location:** `/music-inventory-app`
 
 A containerized full-stack music catalog management system featuring dual interfaces: authenticated admin for full CRUD operations and public read-only catalog for sharing your collection.
@@ -17,7 +17,6 @@ A containerized full-stack music catalog management system featuring dual interf
 - ISRC code tracking, year range statistics, genre classification
 - FastAPI backend with React/Vite admin frontend
 - Docker Compose orchestration with automated sync
-- Optional WireGuard VPN integration for secure remote access
 
 **Tech Stack:** Python 3.13-alpine, FastAPI, React, Vite, Docker, Nginx
 
@@ -26,6 +25,7 @@ A containerized full-stack music catalog management system featuring dual interf
 cd music-inventory-app
 docker compose up -d
 # Admin: http://localhost:5173
+# Remote admin: http://<hostname or IP>:8080
 # Public: http://localhost:9000
 ```
 
@@ -41,7 +41,6 @@ apps/
 └── music-inventory-app/         # Music catalog management system
     ├── backend/                 # FastAPI backend
     ├── frontend/                # Admin and public frontends
-    ├── wireguard/               # VPN configuration
     ├── scripts/                 # Utility scripts
     ├── compose.yaml             # Docker Compose configuration
     └── README.md                # Detailed documentation
