@@ -59,8 +59,8 @@ get_changelog_version() {
 
 # Function to check for deleted scripts referenced in docs
 check_deleted_scripts() {
-    local files_to_check=("$APP_README" "$ROOT_README" "WIREGUARD_SETUP.md")
-    local deleted_scripts=("setup_wireguard.sh" "generate_wg_password_hash.sh" "get-version.sh")
+    local files_to_check=("$APP_README" "$ROOT_README")
+    local deleted_scripts=("get-version.sh")
     local found_references=false
     
     for file in "${files_to_check[@]}"; do

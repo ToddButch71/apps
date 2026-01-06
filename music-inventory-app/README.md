@@ -1,6 +1,6 @@
 # Music Catalog
 
-**Version 1.1.4**
+**Version 1.2.0**
 
 A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces, secured remote access via WireGuard VPN, and automated synchronization.
 

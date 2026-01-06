@@ -5,6 +5,73 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-05
+
+### Removed
+- Removed WireGuard VPN service from Docker Compose configuration
+- Removed WireGuard setup documentation (WIREGUARD_SETUP.md)
+- Removed public Dockerfile (frontend/Dockerfile.public) - using single Dockerfile with build args
+- Cleaned up check-docs.sh script references to deleted WireGuard setup scripts
+- Removed WireGuard from Grafana monitoring dependencies (grafana-compose-test.yml)
+
+### Changed
+- Updated backend Dockerfile with improved Python image specifications
+- Updated file-watcher Dockerfile with dependency updates
+- Reorganized Docker compose services for cleaner configuration
+
+## [1.1.5] - 2025-11-11
+
+### Fixed
+- Fixed JavaScript error at line 1664 in `index.html` caused by orphaned duplicate code block
+- Removed 138 lines of duplicate stats calculation code that was accidentally nested inside `animateValue` function
+- Restored proper `animateValue` function structure
+- Re-added missing multi-disc stats calculation to `updateStats` function
+- Fixed media type analytics to normalize case (CD/cd, DVD/dvd counted separately) - now converts to lowercase before counting
+- Removed trailing whitespaces from `index.html`, `index-public.html`, and `backend/app/main.py`
+
+### Changed
+- Media Type dropdown values changed from uppercase (CD, DVD, Vinyl, Digital) to lowercase (cd, dvd, vinyl, digital) for consistency
+- Relocated stats section to top of page (before table) in both admin and public versions for better visibility
+- Updated `index-public.html` header comments to correctly identify as "Public Read-Only Interface"
+- Updated page title from "Music Catalog - Admin" to "Music Catalog - Public View" in public version
+- Media type analytics now case-insensitive (applied to both `index.html` and `index-public.html`)
+
+### Removed
+- Removed all authentication elements from public interface (`index-public.html`):
+  - Auth status indicator (login/logout buttons)
+  - Login modal and form
+  - Add/Edit album modal and form
+  - Action buttons ("Add New Album" button)
+  - Actions column header in table
+  - All auth-related CSS (modal, form-group, btn classes, auth-status, action-buttons)
+  - All auth-related JavaScript functions (checkAuthStatus, showLoginModal, handleLogin, logout, showAddRecordForm, showEditRecordForm, deleteRecord, handleAlbumSubmit, closeAlbumModal)
+  - Auth state variables (authToken, editingSerial)
+  - Edit/Delete buttons from table rows
+
+### Added
+- Enhanced cross-browser compatibility for Safari and Firefox:
+  - Added `maximum-scale=5.0, user-scalable=yes` to viewport meta tag for better zoom control
+  - Added `-webkit-` and `-moz-` vendor prefixes for box-sizing
+  - Added text size adjustment properties for Safari and Firefox (`-webkit-text-size-adjust`, `-moz-text-size-adjust`)
+  - Enhanced font stack with system fonts (`-apple-system`, `BlinkMacSystemFont`)
+  - Added font smoothing for better rendering on Safari/macOS (`-webkit-font-smoothing`, `-moz-osx-font-smoothing`)
+- Responsive typography using `clamp()` for fluid font sizes:
+  - Headings scale from 1.5rem to 2rem based on viewport
+  - Subtitles scale from 0.9rem to 1.1rem
+  - Table text scales from 0.85rem to 1rem
+- Flexible responsive layouts:
+  - Container has 100% width with max-width constraint
+  - Search bar uses `flex-wrap` with `min-width: 200px` for mobile wrapping
+  - Table has proper overflow handling with `-webkit-overflow-scrolling: touch`
+  - Added `word-wrap` and `overflow-wrap` for long text handling
+- Responsive breakpoints:
+  - Tablet (max-width: 768px): Reduced padding, touch-friendly scrolling
+  - Mobile (max-width: 480px): Smaller fonts, compact padding
+- Browser-specific improvements:
+  - Added `-webkit-user-select` and `-moz-user-select` for consistent text selection behavior
+  - Table display properties for proper rendering across browsers (thead/tbody as table with fixed layout)
+  - Added `min-width: 320px` to body for minimum device support
+
 ## [1.1.4] - 2025-11-07
 
 ## Changed
@@ -132,5 +199,6 @@ You can also manually edit this file following the same format. The script will 
 
 ---
 
+[1.2.0]: https://github.com/ToddButch71/apps/releases/tag/v1.2.0
 [1.1.0]: https://github.com/ToddButch71/apps/releases/tag/v1.1.0
 [1.0.0]: https://github.com/ToddButch71/apps/releases/tag/v1.0.0

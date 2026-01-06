@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <!--
-    Music Catalog - Admin Interface
-
-    This is the private admin version with full CRUD capabilities.
-    DO NOT remove authentication or admin features.
-
-    Admin features:
-    - Login/logout (required)
-    - Add/edit/delete albums
-    - Full authentication
-    - Admin controls
-
-    Also includes public features:
-    - View catalog
+    Music Catalog - Public Read-Only Interface
+    
+    This is the public-facing version of the Music Catalog.
+    DO NOT sync authentication or CRUD features from index.html.
+    
+    Public features only:
+    - View catalog (read-only)
     - Search and filter
     - Sort columns
     - View statistics
     - Auto-refresh
-
-    Public version: index-public.html (read-only, no auth)
+    
+    Private features (NOT included):
+    - Login/logout
+    - Add/edit/delete albums
+    - Authentication
+    - Admin controls
 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Music Catalog - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Catalog - Public View</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
@@ -35,38 +33,26 @@
             --dark: #212529;
             --success: #4cc9f0;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
         }
-
-        html {
-            -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-        }
-
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: var(--dark);
             background-color: #f5f7fb;
             padding: 20px;
-            min-width: 320px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
         }
-
+        
         header {
             text-align: center;
             margin-bottom: 25px;
@@ -76,44 +62,41 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
+        
         h1 {
-            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-size: 2rem;
             margin-bottom: 5px;
         }
-
+        
         .subtitle {
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            font-size: 1.1rem;
             opacity: 0.9;
             max-width: 600px;
             margin: 0 auto;
-            padding: 0 10px;
         }
-
+        
         .search-bar {
             display: flex;
             gap: 10px;
             max-width: 700px;
             margin: 0 auto 25px;
-            flex-wrap: wrap;
         }
-
+        
         .search-input {
             flex: 1;
-            min-width: 200px;
             padding: 12px 15px;
             border-radius: 8px;
             border: 1px solid #d1d5db;
             font-size: 1rem;
             transition: all 0.3s;
         }
-
+        
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
-
+        
         .search-btn {
             background: var(--primary);
             color: white;
@@ -123,19 +106,19 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
+        
         .search-btn:hover {
             background: var(--secondary);
             transform: translateY(-1px);
         }
-
+        
         .table-container {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-
+        
         .table-header {
             display: flex;
             justify-content: space-between;
@@ -144,50 +127,39 @@
             background-color: var(--primary);
             color: white;
         }
-
+        
         .table-header h2 {
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-size: 1.5rem;
         }
-
+        
         table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            overflow-x: auto;
-            display: block;
         }
-
+        
         thead {
             background-color: var(--primary);
             color: white;
         }
-
-        thead, tbody {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-
+        
         th {
             padding: 14px 16px;
             text-align: left;
             font-weight: 500;
-            font-size: clamp(0.85rem, 2vw, 1rem);
         }
-
+        
         th.sortable {
             cursor: pointer;
             user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
             position: relative;
             padding-right: 30px;
         }
-
+        
         th.sortable:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-
+        
         th.sortable::after {
             content: '⇅';
             position: absolute;
@@ -195,135 +167,144 @@
             opacity: 0.5;
             font-size: 0.9rem;
         }
-
+        
         th.sortable.asc::after {
             content: '↑';
             opacity: 1;
         }
-
+        
         th.sortable.desc::after {
             content: '↓';
             opacity: 1;
         }
-
+        
         tbody tr {
             transition: all 0.2s;
             cursor: pointer;
         }
-
+        
         tbody tr:hover {
             background-color: rgba(67, 97, 238, 0.05);
         }
-
+        
         td {
             padding: 14px 16px;
             border-bottom: 1px solid #e2e8f0;
-            font-size: clamp(0.85rem, 2vw, 1rem);
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
+        
 
-        /* Responsive table wrapper */
-        @media screen and (max-width: 768px) {
-            .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            th, td {
-                padding: 10px 8px;
-                font-size: 0.85rem;
-            }
-
-            .container {
-                padding: 0 10px;
-            }
-
-            body {
-                padding: 10px;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .subtitle {
-                font-size: 0.9rem;
-            }
-
-            th, td {
-                padding: 8px 4px;
-                font-size: 0.8rem;
-            }
-        }
-
+        
         .stats {
+            margin-bottom: 30px;
+        }
+
+        .stat-section {
+            margin-bottom: 25px;
+        }
+
+        .stat-section-title {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+        }
+
+        .stat-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 20px;
         }
-
+        
         .stat-card {
             background: white;
             border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             text-align: center;
             transition: all 0.3s ease;
-            cursor: pointer;
             position: relative;
-            overflow: hidden;
+        }
+
+        .stat-card-primary {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         }
 
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
 
+        .stat-card-expandable {
+            cursor: pointer;
+            background: linear-gradient(135deg, #fff9f0 0%, #ffffff 100%);
+        }
+
+        .stat-card-expandable:hover {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
+        }
+        
         .stat-card.expandable {
             cursor: pointer;
         }
-
+        
         .stat-card.expanded {
-            grid-column: span 2;
+            grid-column: 1 / -1;
+            text-align: left;
         }
 
+        .stat-card.expanded .stat-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .stat-card.expanded .stat-value {
+            margin-left: 60px;
+        }
+
+        .stat-card.expanded .stat-label {
+            margin-left: 60px;
+        }
+        
         .stat-icon {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            font-size: 2em;
+            margin-bottom: 10px;
         }
-
+        
         .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #2c3e50;
             transition: all 0.5s ease;
+            line-height: 1.2;
         }
-
+        
         .stat-value.updated {
             animation: countUp 0.5s ease-out;
         }
-
+        
         @keyframes countUp {
             0% { transform: scale(1.2); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
         }
-
+        
         .stat-label {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 4px;
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
+        
         .stat-sublabel {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 2px;
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 6px;
         }
-
+        
         .stat-comparison {
             font-size: 0.8rem;
             color: #64748b;
@@ -331,65 +312,71 @@
             padding-top: 8px;
             border-top: 1px solid #e2e8f0;
         }
-
+        
         .stat-details {
             display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #e2e8f0;
-            text-align: left;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
         }
-
+        
         .stat-card.expanded .stat-details {
             display: block;
         }
 
-        .stat-detail-row {
+        .stat-breakdown-item {
             display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            font-size: 0.85rem;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.9em;
         }
 
-        .stat-detail-label {
-            color: #64748b;
+        .stat-breakdown-label {
+            flex: 0 0 120px;
+            color: #555;
+            font-weight: 500;
         }
 
-        .stat-detail-value {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .stat-progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            margin-top: 8px;
+        .stat-breakdown-bar {
+            flex: 1;
+            height: 24px;
+            background: #f5f5f5;
+            border-radius: 12px;
             overflow: hidden;
+            margin: 0 12px;
         }
 
-        .stat-progress-fill {
+        .stat-breakdown-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 3px;
+            background: linear-gradient(90deg, #ff9800, #f57c00);
             transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 0.8em;
+            font-weight: 600;
         }
 
+        .stat-breakdown-count {
+            color: #666;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+        
         .expand-indicator {
-            position: absolute;
-            bottom: 5px;
-            right: 10px;
-            font-size: 0.7rem;
-            color: #94a3b8;
-            opacity: 0;
-            transition: opacity 0.3s;
+            color: #ff9800;
+            font-size: 0.75em;
+            margin-top: 8px;
+            font-weight: 600;
         }
 
-        .stat-card.expandable:hover .expand-indicator {
-            opacity: 1;
+        .stat-card.expanded .expand-indicator::before {
+            content: "▲ ";
         }
-
+        
         .realtime-indicator {
             position: fixed;
             bottom: 20px;
@@ -410,45 +397,45 @@
             padding: 0 15px;
             gap: 8px;
         }
-
+        
         .realtime-indicator:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
-
+        
         .realtime-indicator.syncing {
             background-color: #3b82f6;
             animation: pulse 1.5s ease-in-out infinite;
         }
-
+        
         .realtime-indicator.error {
             background-color: #ef4444;
         }
-
+        
         .realtime-indicator.updated {
             background-color: #f59e0b;
             animation: flash 2s ease-in-out;
         }
-
+        
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
-
+        
         @keyframes flash {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
-
+        
         .indicator-icon {
             font-size: 1.2rem;
         }
-
+        
         .indicator-text {
             font-size: 0.75rem;
             white-space: nowrap;
         }
-
+        
         .indicator-tooltip {
             position: absolute;
             bottom: 60px;
@@ -463,292 +450,38 @@
             display: none;
             z-index: 101;
         }
-
+        
         .indicator-tooltip.show {
             display: block;
         }
-
+        
         .tooltip-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 6px;
         }
-
+        
         .tooltip-row:last-child {
             margin-bottom: 0;
         }
-
+        
         .tooltip-label {
             font-weight: 600;
             margin-right: 12px;
         }
-
+        
         .realtime-indicator span {
             font-size: 1.2rem;
         }
-
+        
         .empty-state {
             text-align: center;
             padding: 30px;
             color: #64748b;
         }
-
-        /* Login modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-        }
-
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-            margin-left: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-
-        .auth-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 99;
-        }
-
-        .btn-logout {
-            background: #ef4444;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 0.9rem;
-        }
-
-        .btn-logout:hover {
-            background: #dc2626;
-        }
-
-        .action-buttons {
-            display: none;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .action-buttons.show {
-            display: flex;
-        }
-
-        .btn-add {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-add:hover {
-            background: #059669;
-        }
-
-        .btn-edit {
-            background: #3b82f6;
-            color: white;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-            margin-right: 4px;
-        }
-
-        .btn-edit:hover {
-            background: #2563eb;
-        }
-
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
     </style>
 </head>
 <body>
-    <!-- Auth status indicator -->
-    <div class="auth-status" id="authStatus">
-        <span id="authText">Not logged in</span>
-        <button class="btn-logout" id="logoutBtn" style="display:none;">Logout</button>
-        <button class="btn btn-primary" id="loginBtn" onclick="showLoginModal()">Login</button>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h2>Login</h2>
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" required>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Cancel</button>
-                </div>
-                <div id="loginError" style="color: red; margin-top: 10px; display: none;"></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add/Edit Album Modal -->
-    <div id="albumModal" class="modal">
-        <div class="modal-content">
-            <h2 id="albumModalTitle">Add New Album</h2>
-            <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
-                <div class="form-group">
-                    <label for="albumMedia">Media Type:</label>
-                    <select id="albumMedia" required>
-                        <option value="">Select media type</option>
-                        <option value="cd">cd</option>
-                        <option value="dvd">dvd</option>
-                        <option value="vinyl">vinyl</option>
-                        <option value="digital">digital</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="albumArtist">Artist:</label>
-                    <input type="text" id="albumArtist" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumTitle">Album Title:</label>
-                    <input type="text" id="albumTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumYear">Year Released:</label>
-                    <input type="number" id="albumYear" min="1900" max="2100" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumSerial">Barcode:</label>
-                    <input type="text" id="albumSerial" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumMediaCount">Media Count:</label>
-                    <input type="number" id="albumMediaCount" min="1" value="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumGenre">Genre:</label>
-                    <input type="text" id="albumGenre" list="genreList" required placeholder="Select or type a genre">
-                    <datalist id="genreList">
-                        <option value="Electronic">
-                        <option value="Metal">
-                        <option value="Hip Hop">
-                        <option value="Rock">
-                        <option value="Jazz">
-                        <option value="Classical">
-                        <option value="Pop">
-                        <option value="Country">
-                        <option value="R&B">
-                        <option value="Blues">
-                        <option value="Reggae">
-                        <option value="Punk">
-                        <option value="Indie">
-                        <option value="Folk">
-                        <option value="Other">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label for="albumNotes">Notes (optional):</label>
-                    <textarea id="albumNotes" rows="3" placeholder="Add any notes about this album..."></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary" id="albumSubmitBtn">Add Album</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeAlbumModal()">Cancel</button>
-                </div>
-                <div id="albumError" style="color: red; margin-top: 10px; display: none;"></div>
-            </form>
-        </div>
-    </div>
-
     <div class="container">
         <header>
             <h1>Music Catalog</h1>
@@ -760,100 +493,98 @@
             <button class="search-btn">Search</button>
         </div>
 
-        <!-- Action buttons (shown when authenticated) -->
-        <div class="action-buttons" id="actionButtons">
-            <button class="btn btn-add" onclick="showAddRecordForm()">Add New Album</button>
-        </div>
-
         <div class="stats" id="statsContainer">
-            <!-- Collection Insights -->
-            <div class="stat-card">
-                <div class="stat-icon">💿</div>
-                <div class="stat-value" id="totalRecords">0</div>
-                <div class="stat-label">Total Albums</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">📀</div>
-                <div class="stat-value" id="totalItems">0</div>
-                <div class="stat-label">Total Media Items</div>
-                <div class="stat-sublabel" id="avgMediaCount">Avg: 0 per album</div>
-            </div>
-
-            <!-- Genre Analytics -->
-            <div class="stat-card expandable" onclick="toggleStatCard(this)">
-                <div class="stat-icon">🎵</div>
-                <div class="stat-value" id="genreCount">0</div>
-                <div class="stat-label">Unique Genres</div>
-                <div class="stat-sublabel" id="topGenre">Top: --</div>
-                <div class="expand-indicator">Click for details ▼</div>
-                <div class="stat-details" id="genreDetails">
-                    <!-- Populated by JavaScript -->
+            <!-- Row 1: Primary Collection Stats -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">Collection Overview</h3>
+                <div class="stat-row">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">💿</div>
+                        <div class="stat-value" id="totalRecords">0</div>
+                        <div class="stat-label">Albums</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">📀</div>
+                        <div class="stat-value" id="totalItems">0</div>
+                        <div class="stat-label">Total Discs</div>
+                        <div class="stat-sublabel" id="avgMediaCount">Avg: 0 per album</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">🎤</div>
+                        <div class="stat-value" id="totalArtists">0</div>
+                        <div class="stat-label">Artists</div>
+                        <div class="stat-sublabel" id="artistDiversity">--</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="multiDiscCount">0</div>
+                        <div class="stat-label">Multi-Disc</div>
+                        <div class="stat-sublabel" id="multiDiscComparison">--</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Media Type Breakdown -->
-            <div class="stat-card expandable" onclick="toggleStatCard(this)">
-                <div class="stat-icon">💽</div>
-                <div class="stat-value" id="mediaTypeCount">0</div>
-                <div class="stat-label">Media Types</div>
-                <div class="stat-sublabel" id="topMediaType">Top: --</div>
-                <div class="expand-indicator">Click for details ▼</div>
-                <div class="stat-details" id="mediaTypeDetails">
-                    <!-- Populated by JavaScript -->
+            
+            <!-- Row 2: Breakdown by Category -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">By Category</h3>
+                <div class="stat-row">
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">🎵</div>
+                        <div class="stat-value" id="genreCount">0</div>
+                        <div class="stat-label">Genres</div>
+                        <div class="stat-sublabel" id="topGenre">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="genreDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">💽</div>
+                        <div class="stat-value" id="mediaTypeCount">0</div>
+                        <div class="stat-label">Media Types</div>
+                        <div class="stat-sublabel" id="topMediaType">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="mediaTypeDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="topArtistCount">0</div>
+                        <div class="stat-label">Top Artist</div>
+                        <div class="stat-sublabel" id="topArtistName">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="artistDetails"></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Timeline Stats - Newest -->
-            <div class="stat-card">
-                <div class="stat-icon">🆕</div>
-                <div class="stat-value" id="newestYear">--</div>
-                <div class="stat-label">Newest Album</div>
-                <div class="stat-sublabel" id="newestAlbum">--</div>
-            </div>
-
-            <!-- Timeline Stats - Oldest -->
-            <div class="stat-card">
-                <div class="stat-icon">📻</div>
-                <div class="stat-value" id="oldestYear">--</div>
-                <div class="stat-label">Oldest Album</div>
-                <div class="stat-sublabel" id="oldestAlbum">--</div>
-            </div>
-
-            <!-- Timeline Stats - Span -->
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
-                <div class="stat-value" id="yearSpan">0</div>
-                <div class="stat-label">Years Span</div>
-                <div class="stat-sublabel" id="yearRange">---- to ----</div>
-            </div>
-
-            <!-- Artist Stats - Total -->
-            <div class="stat-card">
-                <div class="stat-icon">🎤</div>
-                <div class="stat-value" id="totalArtists">0</div>
-                <div class="stat-label">Unique Artists</div>
-                <div class="stat-sublabel" id="artistDiversity">Diversity: --</div>
-            </div>
-
-            <!-- Artist Stats - Top Artist -->
-            <div class="stat-card expandable" onclick="toggleStatCard(this)">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-value" id="topArtistCount">0</div>
-                <div class="stat-label">Top Artist</div>
-                <div class="stat-sublabel" id="topArtistName">--</div>
-                <div class="expand-indicator">Click for details ▼</div>
-                <div class="stat-details" id="artistDetails">
-                    <!-- Populated by JavaScript -->
+            
+            <!-- Row 3: Timeline -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">Timeline</h3>
+                <div class="stat-row">
+                    <div class="stat-card">
+                        <div class="stat-icon">📻</div>
+                        <div class="stat-value" id="oldestYear">--</div>
+                        <div class="stat-label">Oldest</div>
+                        <div class="stat-sublabel" id="oldestAlbum">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value" id="yearSpan">0</div>
+                        <div class="stat-label">Year Span</div>
+                        <div class="stat-sublabel" id="yearRange">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🆕</div>
+                        <div class="stat-value" id="newestYear">--</div>
+                        <div class="stat-label">Newest</div>
+                        <div class="stat-sublabel" id="newestAlbum">--</div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Comparison Stats -->
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-value" id="multiDiscCount">0</div>
-                <div class="stat-label">Multi-Disc Albums</div>
-                <div class="stat-comparison" id="multiDiscComparison">-- of collection</div>
             </div>
         </div>
 
@@ -862,7 +593,7 @@
                 <h2>Music Catalog</h2>
                 <button id="refreshBtn">Refresh Data</button>
             </div>
-
+            
             <table id="musicTable">
                 <thead>
                     <tr>
@@ -874,7 +605,6 @@
                         <th>Media Count</th>
                         <th class="sortable" data-column="genre">Genre</th>
                         <th>Notes</th>
-                        <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -905,9 +635,225 @@
     <script>
         // API URL configuration - dynamically constructed based on current hostname
         const API_URL = window.location.protocol + '//' + window.location.hostname + ':8000';
-        
-        console.log('API URL:', API_URL);  // Debug log to see what URL is being used
+            <div class="stat-section">
+                <h3 class="stat-section-title">By Category</h3>
+                <div class="stat-row">
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">🎵</div>
+                        <div class="stat-value" id="genreCount">0</div>
+                        <div class="stat-label">Genres</div>
+                        <div class="stat-sublabel" id="topGenre">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="genreDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">💽</div>
+                        <div class="stat-value" id="mediaTypeCount">0</div>
+                        <div class="stat-label">Media Types</div>
+                        <div class="stat-sublabel" id="topMediaType">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="mediaTypeDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="topArtistCount">0</div>
+                        <div class="stat-label">Top Artist</div>
+                        <div class="stat-sublabel" id="topArtistName">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="artistDetails"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 3: Timeline -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">Timeline</h3>
+                <div class="stat-row">
+                    <div class="stat-card">
+                        <div class="stat-icon">📻</div>
+                        <div class="stat-value" id="oldestYear">--</div>
+                        <div class="stat-label">Oldest</div>
+                        <div class="stat-sublabel" id="oldestAlbum">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value" id="yearSpan">0</div>
+                        <div class="stat-label">Year Span</div>
+                        <div class="stat-sublabel" id="yearRange">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🆕</div>
+                        <div class="stat-value" id="newestYear">--</div>
+                        <div class="stat-label">Newest</div>
+                        <div class="stat-sublabel" id="newestAlbum">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Music Catalog</h2>
+                <button id="refreshBtn">Refresh Data</button>
+            </div>
+            
+            <table id="musicTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="media">Media Type</th>
+                        <th class="sortable" data-column="artist">Artist</th>
+                        <th class="sortable" data-column="title">Album Title</th>
+                        <th class="sortable" data-column="year">Year Released</th>
+                        <th>Barcode</th>
+                        <th>Media Count</th>
+                        <th class="sortable" data-column="genre">Genre</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="realtime-indicator" id="realtimeIndicator" title="Click for sync details">
+        <span class="indicator-icon">✓</span>
+        <div class="indicator-tooltip" id="indicatorTooltip">
+            <div class="tooltip-row">
+                <span class="tooltip-label">Status:</span>
+                <span id="syncStatus">Connected</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Last Check:</span>
+                <span id="lastCheck">Just now</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Records:</span>
+                <span id="recordCount">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                <div class="stat-row">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">💿</div>
+                        <div class="stat-value" id="totalRecords">0</div>
+                        <div class="stat-label">Albums</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">📀</div>
+                        <div class="stat-value" id="totalItems">0</div>
+                        <div class="stat-label">Total Discs</div>
+                        <div class="stat-sublabel" id="avgMediaCount">Avg: 0 per album</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">�</div>
+                        <div class="stat-value" id="totalArtists">0</div>
+                        <div class="stat-label">Artists</div>
+                        <div class="stat-sublabel" id="artistDiversity">--</div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="multiDiscCount">0</div>
+                        <div class="stat-label">Multi-Disc</div>
+                        <div class="stat-sublabel" id="multiDiscComparison">--</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 2: Breakdown by Category -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">By Category</h3>
+                <div class="stat-row">
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">🎵</div>
+                        <div class="stat-value" id="genreCount">0</div>
+                        <div class="stat-label">Genres</div>
+                        <div class="stat-sublabel" id="topGenre">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="genreDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">💽</div>
+                        <div class="stat-value" id="mediaTypeCount">0</div>
+                        <div class="stat-label">Media Types</div>
+                        <div class="stat-sublabel" id="topMediaType">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="mediaTypeDetails"></div>
+                    </div>
+                    
+                    <div class="stat-card stat-card-expandable expandable" onclick="toggleStatCard(this)">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="topArtistCount">0</div>
+                        <div class="stat-label">Top Artist</div>
+                        <div class="stat-sublabel" id="topArtistName">--</div>
+                        <div class="expand-indicator">▼</div>
+                        <div class="stat-details" id="artistDetails"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 3: Timeline -->
+            <div class="stat-section">
+                <h3 class="stat-section-title">Timeline</h3>
+                <div class="stat-row">
+                    <div class="stat-card">
+                        <div class="stat-icon">📻</div>
+                        <div class="stat-value" id="oldestYear">--</div>
+                        <div class="stat-label">Oldest</div>
+                        <div class="stat-sublabel" id="oldestAlbum">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value" id="yearSpan">0</div>
+                        <div class="stat-label">Year Span</div>
+                        <div class="stat-sublabel" id="yearRange">--</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🆕</div>
+                        <div class="stat-value" id="newestYear">--</div>
+                        <div class="stat-label">Newest</div>
+                        <div class="stat-sublabel" id="newestAlbum">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="realtime-indicator" id="realtimeIndicator" title="Click for sync details">
+        <span class="indicator-icon">✓</span>
+        <div class="indicator-tooltip" id="indicatorTooltip">
+            <div class="tooltip-row">
+                <span class="tooltip-label">Status:</span>
+                <span id="syncStatus">Connected</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Last Check:</span>
+                <span id="lastCheck">Just now</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Records:</span>
+                <span id="recordCount">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API URL configuration - dynamically constructed based on current hostname
+        const API_URL = window.location.protocol + '//' + window.location.hostname + ':8000';
+        
         // Fetch data from backend API
         let musicData = [];
         let lastRecordCount = 0;
@@ -917,14 +863,14 @@
         async function loadInventory() {
             const indicator = document.getElementById('realtimeIndicator');
             const icon = indicator?.querySelector('.indicator-icon');
-
+            
             try {
                 // Show syncing state
                 if (indicator) {
                     indicator.classList.add('syncing');
                     if (icon) icon.textContent = '↻';
                 }
-
+                
                 const response = await fetch(API_URL + '/inventory');
                 if (response.ok) {
                     const data = await response.json();
@@ -932,43 +878,40 @@
                     musicData = data;
                     renderTable();
                     updateStats();
-
+                    
                     // Update sync status
                     updateSyncStatus('success', data.length, previousCount);
                 } else {
-                    console.error('Failed to load inventory - HTTP status:', response.status);
+                    console.error('Failed to load inventory');
                     updateSyncStatus('error');
-                    alert(`Cannot connect to backend API at ${API_URL}\n\nIf accessing via IP address, ensure:\n1. Port 8000 is accessible from your network\n2. Firewall allows connections to port 8000\n3. Backend service is running`);
                 }
             } catch (error) {
                 console.error('Error loading inventory:', error);
-                console.error('API URL attempted:', API_URL);
                 updateSyncStatus('error');
-                alert(`Cannot connect to backend API at ${API_URL}\n\nError: ${error.message}\n\nIf accessing via IP address, ensure:\n1. Port 8000 is accessible from your network\n2. Firewall allows connections to port 8000\n3. Backend service is running`);
             }
         }
-
+        
         function updateSyncStatus(status, currentCount = 0, previousCount = 0) {
             const indicator = document.getElementById('realtimeIndicator');
             const icon = indicator?.querySelector('.indicator-icon');
             const statusText = document.getElementById('syncStatus');
             const lastCheckText = document.getElementById('lastCheck');
             const recordCountText = document.getElementById('recordCount');
-
+            
             if (!indicator) return;
-
+            
             // Remove all status classes
             indicator.classList.remove('syncing', 'error', 'updated');
-
+            
             lastCheckTime = new Date();
-
+            
             if (status === 'success') {
                 if (currentCount !== previousCount && previousCount > 0) {
                     // Data changed
                     indicator.classList.add('updated');
                     if (icon) icon.textContent = '★';
                     if (statusText) statusText.textContent = 'Updated!';
-
+                    
                     // Reset to normal after 3 seconds
                     setTimeout(() => {
                         indicator.classList.remove('updated');
@@ -980,7 +923,7 @@
                     if (icon) icon.textContent = '✓';
                     if (statusText) statusText.textContent = 'Connected';
                 }
-
+                
                 if (recordCountText) recordCountText.textContent = currentCount;
                 lastRecordCount = currentCount;
             } else if (status === 'error') {
@@ -988,47 +931,47 @@
                 if (icon) icon.textContent = '✗';
                 if (statusText) statusText.textContent = 'Error';
             }
-
+            
             if (lastCheckText) {
                 lastCheckText.textContent = formatLastCheck(lastCheckTime);
             }
         }
-
+        
         function formatLastCheck(date) {
             const now = new Date();
             const diffMs = now - date;
             const diffSec = Math.floor(diffMs / 1000);
             const diffMin = Math.floor(diffSec / 60);
-
+            
             if (diffSec < 10) return 'Just now';
             if (diffSec < 60) return `${diffSec}s ago`;
             if (diffMin < 60) return `${diffMin}m ago`;
-
+            
             return date.toLocaleTimeString();
         }
-
+        
         function initRealtimeIndicator() {
             const indicator = document.getElementById('realtimeIndicator');
             const tooltip = document.getElementById('indicatorTooltip');
-
+            
             if (!indicator || !tooltip) return;
-
+            
             // Toggle tooltip on click
             indicator.addEventListener('click', (e) => {
                 e.stopPropagation();
                 tooltip.classList.toggle('show');
             });
-
+            
             // Close tooltip when clicking outside
             document.addEventListener('click', () => {
                 tooltip.classList.remove('show');
             });
-
+            
             // Prevent tooltip from closing when clicking inside it
             tooltip.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
-
+            
             // Update "last check" time every 10 seconds
             setInterval(() => {
                 const lastCheckText = document.getElementById('lastCheck');
@@ -1036,7 +979,7 @@
                     lastCheckText.textContent = formatLastCheck(lastCheckTime);
                 }
             }, 10000);
-
+            
             // Auto-refresh every 12 hours to check for updates
             syncCheckInterval = setInterval(() => {
                 loadInventory();
@@ -1046,249 +989,32 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize the app
             initApp();
-
+            
             // Load inventory from backend
             loadInventory();
-
-            // Check if user is already logged in
-            checkAuthStatus();
-
+            
             // Initialize realtime sync indicator
             initRealtimeIndicator();
         });
 
-        // Auth state
-        let authToken = localStorage.getItem('authToken');
-
-        function checkAuthStatus() {
-            if (authToken) {
-                const username = localStorage.getItem('username') || 'user';
-                document.getElementById('authText').textContent = `Logged in as ${username}`;
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'inline-block';
-                document.getElementById('actionButtons').classList.add('show');
-            }
-        }
-
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'block';
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('loginForm').reset();
-            document.getElementById('loginError').style.display = 'none';
-        }
-
-        async function handleLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const formData = new URLSearchParams();
-                formData.append('username', username);
-                formData.append('password', password);
-
-                const response = await fetch(API_URL + '/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    authToken = data.access_token;
-                    const username = document.getElementById('username').value;
-                    localStorage.setItem('authToken', authToken);
-                    localStorage.setItem('username', username);
-                    closeLoginModal();
-                    checkAuthStatus();
-                    renderTable(); // Re-render to show edit/delete buttons
-                } else {
-                    // Get the actual error message from the backend
-                    const errorData = await response.json();
-                    const errorMessage = errorData.detail || 'Invalid credentials';
-                    document.getElementById('loginError').textContent = errorMessage;
-                    document.getElementById('loginError').style.display = 'block';
-                }
-            } catch (error) {
-                document.getElementById('loginError').textContent = 'Login failed. Please try again.';
-                document.getElementById('loginError').style.display = 'block';
-            }
-        }
-
-        function logout() {
-            authToken = null;
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('username');
-            document.getElementById('authText').textContent = 'Not logged in';
-            document.getElementById('loginBtn').style.display = 'inline-block';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('actionButtons').classList.remove('show');
-            document.getElementById('actionsHeader').style.display = 'none';
-            renderTable(); // Re-render to hide action buttons
-        }
-
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
-        // Password change handling
-
-        // Album form handling
-        let editingSerial = null;
-
-        function showAddRecordForm() {
-            editingSerial = null;
-            document.getElementById('albumModalTitle').textContent = 'Add New Album';
-            document.getElementById('albumSubmitBtn').textContent = 'Add Album';
-            document.getElementById('albumForm').reset();
-            document.getElementById('albumError').style.display = 'none';
-            document.getElementById('albumModal').style.display = 'block';
-        }
-
-        function showEditRecordForm(serial) {
-            editingSerial = serial;
-            const record = musicData.find(item => item.serial_number == serial);
-            if (!record) return;
-
-            document.getElementById('albumModalTitle').textContent = 'Edit Album';
-            document.getElementById('albumSubmitBtn').textContent = 'Update Album';
-            document.getElementById('albumMedia').value = record.media;
-            document.getElementById('albumArtist').value = record.artist;
-            document.getElementById('albumTitle').value = record.titles[0];
-            document.getElementById('albumYear').value = record.year;
-            document.getElementById('albumSerial').value = record.serial_number;
-            document.getElementById('albumMediaCount').value = record.media_count || 1;
-            document.getElementById('albumGenre').value = record.genre;
-            document.getElementById('albumNotes').value = record.notes || "";
-            document.getElementById('albumError').style.display = 'none';
-            document.getElementById('albumModal').style.display = 'block';
-        }
-
-        function closeAlbumModal() {
-            document.getElementById('albumModal').style.display = 'none';
-            document.getElementById('albumForm').reset();
-            editingSerial = null;
-        }
-
-        async function handleAlbumSubmit(event) {
-            event.preventDefault();
-
-            const albumData = {
-                media: document.getElementById('albumMedia').value,
-                artist: document.getElementById('albumArtist').value,
-                titles: [document.getElementById('albumTitle').value],
-                year: parseInt(document.getElementById('albumYear').value),
-                serial_number: document.getElementById('albumSerial').value,
-                media_count: parseInt(document.getElementById('albumMediaCount').value),
-                genre: document.getElementById('albumGenre').value,
-                notes: document.getElementById('albumNotes').value || ""
-            };
-
-            // Confirmation prompt
-            if (editingSerial) {
-                if (!confirm(`Are you sure you want to update this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
-                    return;
-                }
-            } else {
-                if (!confirm(`Are you sure you want to add this album?\n\nArtist: ${albumData.artist}\nTitle: ${albumData.titles[0]}`)) {
-                    return;
-                }
-            }
-
-            try {
-                let response;
-                if (editingSerial) {
-                    // Update existing record
-                    response = await fetch(`${API_URL}/inventory/${editingSerial}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify(albumData)
-                    });
-                } else {
-                    // Add new record
-                    response = await fetch(API_URL + '/inventory', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify(albumData)
-                    });
-                }
-
-                if (response.ok) {
-                    const result = await response.json();
-                    closeAlbumModal();
-                    // Reload inventory from backend
-                    await loadInventory();
-                } else {
-                    const error = await response.json();
-                    document.getElementById('albumError').textContent = error.detail || 'Failed to save album';
-                    document.getElementById('albumError').style.display = 'block';
-                }
-            } catch (error) {
-                document.getElementById('albumError').textContent = 'Failed to save album. Please try again.';
-                document.getElementById('albumError').style.display = 'block';
-            }
-        }
-
-        async function deleteRecord(serial) {
-            // Find the record to show details in confirmation
-            const record = musicData.find(item => item.serial_number == serial);
-            if (!record) {
-                alert('Album not found');
-                return;
-            }
-
-            const confirmMessage = `Are you sure you want to DELETE this album?\n\nArtist: ${record.artist}\nTitle: ${record.titles[0]}\nYear: ${record.year}\nMedia: ${record.media}\n\nThis action cannot be undone!`;
-
-            if (!confirm(confirmMessage)) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/inventory/${serial}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    // Reload inventory from backend
-                    await loadInventory();
-                } else {
-                    alert('Failed to delete album');
-                }
-            } catch (error) {
-                alert('Failed to delete album. Please try again.');
-            }
-        }
-
         function initApp() {
             // Render initial table
             renderTable();
-
+            
             // Add search functionality
             setupSearch();
-
+            
             // Add sorting functionality
             setupSorting();
-
+            
             // Add refresh button handler
             document.getElementById('refreshBtn').addEventListener('click', () => {
-                setTimeout(() => {
+                setTimeout(() => { 
                     renderTable();
-                    updateStats();
+                    updateStats(); 
                 }, 500);
             });
-
+            
             // Initialize stats
             updateStats();
         }
@@ -1301,7 +1027,7 @@
             sortableHeaders.forEach(header => {
                 header.addEventListener('click', () => {
                     const column = header.dataset.column;
-
+                    
                     // Toggle direction if clicking the same column
                     if (currentSortColumn === column) {
                         currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
@@ -1309,18 +1035,18 @@
                         currentSortColumn = column;
                         currentSortDirection = 'asc';
                     }
-
+                    
                     // Update header classes
                     sortableHeaders.forEach(h => {
                         h.classList.remove('asc', 'desc');
                     });
                     header.classList.add(currentSortDirection);
-
+                    
                     // Re-render table with new sort
                     renderTable();
                 });
             });
-
+            
             // Set initial sort indicator on artist column
             const artistHeader = document.querySelector('th[data-column="artist"]');
             if (artistHeader) {
@@ -1331,11 +1057,11 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-
+            
             // Sort data based on current sort settings
             const sortedData = [...musicData].sort((a, b) => {
                 let aVal, bVal;
-
+                
                 switch(currentSortColumn) {
                     case 'media':
                         aVal = a.media.toLowerCase();
@@ -1361,36 +1087,25 @@
                         aVal = a.artist.toLowerCase();
                         bVal = b.artist.toLowerCase();
                 }
-
+                
                 let comparison = 0;
                 if (typeof aVal === 'number') {
                     comparison = aVal - bVal;
                 } else {
                     comparison = aVal.localeCompare(bVal);
                 }
-
+                
                 return currentSortDirection === 'asc' ? comparison : -comparison;
             });
-
+            
             sortedData.forEach(item => {
                 const row = document.createElement('tr');
-
+                
                 // Format titles for display
-                const formattedTitles = item.titles.length > 1 ?
-                    `${item.titles[0]} + ${item.titles.length - 1} more` :
+                const formattedTitles = item.titles.length > 1 ? 
+                    `${item.titles[0]} + ${item.titles.length - 1} more` : 
                     item.titles[0];
-
-                // Create action buttons if authenticated
-                let actionsCell = '';
-                if (authToken) {
-                    actionsCell = `
-                        <td>
-                            <button class="btn btn-edit" onclick="showEditRecordForm('${item.serial_number}')">Edit</button>
-                            <button class="btn btn-delete" onclick="deleteRecord('${item.serial_number}')">Delete</button>
-                        </td>
-                    `;
-                }
-
+                
                 row.innerHTML = `
                     <td>${item.media.toLowerCase()}</td>
                     <td>${escapeHtml(item.artist)}</td>
@@ -1400,18 +1115,10 @@
                     <td>${item.media_count || 1}</td>
                     <td>${item.genre}</td>
                     <td>${escapeHtml(item.notes || "")}</td>
-                    ${actionsCell}
                 `;
-
+                
                 tbody.appendChild(row);
             });
-
-            // Show/hide actions header based on auth
-            if (authToken) {
-                document.getElementById('actionsHeader').style.display = '';
-            } else {
-                document.getElementById('actionsHeader').style.display = 'none';
-            }
         }
 
         function escapeHtml(unsafe) {
@@ -1450,30 +1157,30 @@
                 document.getElementById('multiDiscComparison').textContent = 'No results';
                 return;
             }
-
+            
             // Collection Insights
             const total = dataToAnalyze.length;
             const totalMediaItems = dataToAnalyze.reduce((sum, item) => sum + (item.media_count || 1), 0);
             const avgMedia = (totalMediaItems / total).toFixed(1);
-
+            
             animateValue('totalRecords', total);
             animateValue('totalItems', totalMediaItems);
             document.getElementById('avgMediaCount').textContent = `Avg: ${avgMedia} per album`;
-
+            
             // Genre Analytics
             const genreMap = new Map();
             dataToAnalyze.forEach(item => {
                 const genre = item.genre || 'Unknown';
                 genreMap.set(genre, (genreMap.get(genre) || 0) + 1);
             });
-
+            
             const genreCount = genreMap.size;
             const genreArray = Array.from(genreMap.entries()).sort((a, b) => b[1] - a[1]);
             const topGenre = genreArray[0];
-
+            
             animateValue('genreCount', genreCount);
             document.getElementById('topGenre').textContent = `Top: ${topGenre[0]} (${topGenre[1]})`;
-
+            
             // Populate genre details
             const genreDetailsHTML = genreArray.map((g, idx) => {
                 const percentage = ((g[1] / total) * 100).toFixed(1);
@@ -1488,21 +1195,21 @@
                 `;
             }).join('');
             document.getElementById('genreDetails').innerHTML = genreDetailsHTML;
-
+            
             // Media Type Breakdown
             const mediaMap = new Map();
             dataToAnalyze.forEach(item => {
-                const media = (item.media || 'Unknown').toLowerCase();
+                const media = item.media || 'Unknown';
                 mediaMap.set(media, (mediaMap.get(media) || 0) + 1);
             });
-
+            
             const mediaTypeCount = mediaMap.size;
             const mediaArray = Array.from(mediaMap.entries()).sort((a, b) => b[1] - a[1]);
             const topMedia = mediaArray[0];
-
+            
             animateValue('mediaTypeCount', mediaTypeCount);
             document.getElementById('topMediaType').textContent = `Top: ${topMedia[0]} (${topMedia[1]})`;
-
+            
             // Populate media type details
             const mediaDetailsHTML = mediaArray.map((m, idx) => {
                 const percentage = ((m[1] / total) * 100).toFixed(1);
@@ -1517,51 +1224,51 @@
                 `;
             }).join('');
             document.getElementById('mediaTypeDetails').innerHTML = mediaDetailsHTML;
-
+            
             // Timeline Stats
             const years = dataToAnalyze.map(item => item.year);
             const oldestYear = Math.min(...years);
             const newestYear = Math.max(...years);
             const yearSpan = newestYear - oldestYear;
-
+            
             // Find albums for newest and oldest years
             const newestAlbums = dataToAnalyze.filter(item => item.year === newestYear);
             const oldestAlbums = dataToAnalyze.filter(item => item.year === oldestYear);
             const newestAlbum = newestAlbums[0];
             const oldestAlbum = oldestAlbums[0];
-
+            
             document.getElementById('newestYear').textContent = newestYear;
-            document.getElementById('newestAlbum').textContent = newestAlbums.length > 1
+            document.getElementById('newestAlbum').textContent = newestAlbums.length > 1 
                 ? `${newestAlbum.artist.substring(0, 20)}... +${newestAlbums.length - 1} more`
                 : newestAlbum.artist.substring(0, 25);
-
+            
             document.getElementById('oldestYear').textContent = oldestYear;
             document.getElementById('oldestAlbum').textContent = oldestAlbums.length > 1
                 ? `${oldestAlbum.artist.substring(0, 20)}... +${oldestAlbums.length - 1} more`
                 : oldestAlbum.artist.substring(0, 25);
-
+            
             animateValue('yearSpan', yearSpan);
             document.getElementById('yearRange').textContent = `${oldestYear} to ${newestYear}`;
-
+            
             // Artist Stats
             const artistMap = new Map();
             dataToAnalyze.forEach(item => {
                 const artist = item.artist;
                 artistMap.set(artist, (artistMap.get(artist) || 0) + 1);
             });
-
+            
             const totalArtists = artistMap.size;
             const artistArray = Array.from(artistMap.entries()).sort((a, b) => b[1] - a[1]);
             const topArtist = artistArray[0];
             const multiAlbumArtists = artistArray.filter(a => a[1] > 1).length;
             const diversity = (total / totalArtists).toFixed(2);
-
+            
             animateValue('totalArtists', totalArtists);
             document.getElementById('artistDiversity').textContent = `${diversity} albums/artist`;
-
+            
             animateValue('topArtistCount', topArtist[1]);
             document.getElementById('topArtistName').textContent = topArtist[0].substring(0, 25);
-
+            
             // Populate artist details (top 10)
             const artistDetailsHTML = artistArray.slice(0, 10).map((a, idx) => {
                 const percentage = ((a[1] / total) * 100).toFixed(1);
@@ -1575,45 +1282,45 @@
                     </div>
                 `;
             }).join('');
-            const multiArtistNote = multiAlbumArtists > 0
+            const multiArtistNote = multiAlbumArtists > 0 
                 ? `<div class="stat-detail-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
                     <span class="stat-detail-label">Artists with 2+ albums</span>
                     <span class="stat-detail-value">${multiAlbumArtists}</span>
                    </div>`
                 : '';
             document.getElementById('artistDetails').innerHTML = artistDetailsHTML + multiArtistNote;
-
+            
             // Comparison Stats - Multi-disc albums
             const multiDiscAlbums = dataToAnalyze.filter(item => (item.media_count || 1) > 1).length;
             const multiDiscPercentage = ((multiDiscAlbums / total) * 100).toFixed(1);
-
+            
             animateValue('multiDiscCount', multiDiscAlbums);
             document.getElementById('multiDiscComparison').textContent = `${multiDiscPercentage}% of collection`;
         }
-
+        
         function animateValue(elementId, newValue) {
             const element = document.getElementById(elementId);
             if (!element) return;
-
+            
             const currentValue = parseInt(element.textContent) || 0;
             if (currentValue === newValue) return;
-
+            
             element.classList.add('updated');
             element.textContent = newValue;
-
+            
             setTimeout(() => {
                 element.classList.remove('updated');
             }, 500);
         }
-
+        
         function toggleStatCard(card) {
             const wasExpanded = card.classList.contains('expanded');
-
+            
             // Collapse all cards first
             document.querySelectorAll('.stat-card.expanded').forEach(c => {
                 c.classList.remove('expanded');
             });
-
+            
             // If this card wasn't expanded, expand it
             if (!wasExpanded) {
                 card.classList.add('expanded');
@@ -1622,10 +1329,10 @@
 
         function setupSearch() {
             const searchInput = document.getElementById('searchInput');
-
+            
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase().trim();
-
+                
                 if (!searchTerm) {
                     // Reset: show all rows and update stats with full collection
                     document.querySelectorAll('#tableBody tr').forEach(row => {
@@ -1634,18 +1341,18 @@
                     updateStats(musicData);
                     return;
                 }
-
+                
                 // Filter data based on search term
                 const filteredData = [];
-
+                
                 document.querySelectorAll('#tableBody tr').forEach(row => {
                     const cells = row.querySelectorAll('td');
-                    const hasMatch = Array.from(cells).some(cell =>
+                    const hasMatch = Array.from(cells).some(cell => 
                         cell.textContent.toLowerCase().includes(searchTerm)
                     );
-
+                    
                     row.style.display = hasMatch ? '' : 'none';
-
+                    
                     // Find the corresponding data item for stats calculation
                     if (hasMatch) {
                         const serialNumber = cells[4].textContent; // Barcode is in 5th column
@@ -1655,7 +1362,7 @@
                         }
                     }
                 });
-
+                
                 // Update stats with filtered data
                 updateStats(filteredData);
             });

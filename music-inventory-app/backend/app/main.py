@@ -45,7 +45,6 @@ def load_credentials():
     """Load admin credentials from .secrets file."""
     secrets_file = Path(__file__).parent.parent / '.secrets'
     credentials = {}
-    
     if secrets_file.exists():
         with open(secrets_file, 'r', encoding='utf-8') as f:
             for line in f:
@@ -57,7 +56,7 @@ def load_credentials():
     else:
         # Fallback to default credentials if file doesn't exist
         credentials['admin'] = 'supersecret'
-    
+
     return credentials
 
 ADMIN_CREDENTIALS = load_credentials()
@@ -67,18 +66,18 @@ ADMIN_CREDENTIALS = load_credentials()
 async def log_external_access(request: Request, call_next):
     # Get client IP
     client_ip = request.client.host if request.client else "unknown"
-    
+
     # Check for forwarded IP (if behind a proxy)
     forwarded = request.headers.get("X-Forwarded-For")
     if forwarded:
         client_ip = forwarded.split(",")[0].strip()
-    
+
     # Log if not from localhost
     if client_ip not in ["127.0.0.1", "::1", "localhost", "unknown"]:
         external_logger.info(
             f"External access from {client_ip} - {request.method} {request.url.path}"
         )
-    
+
     response = await call_next(request)
     return response
 
@@ -130,7 +129,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), request: Request = None):
     username = form_data.username
     password = form_data.password
-    
+
     # Get client IP address
     client_ip = "unknown"
     if request:
@@ -139,13 +138,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), request: Request = N
         forwarded = request.headers.get("X-Forwarded-For")
         if forwarded:
             client_ip = forwarded.split(",")[0].strip()
-    
+
     if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
         external_logger.info("Successful login - Username: %s - IP: %s", username, client_ip)
         # Create user-specific token
         token = create_token(username)
         return {"access_token": token, "token_type": "bearer"}
-    
+
     # Log unauthorized access attempt
     external_logger.warning("UNAUTHORIZED login attempt - Username: %s - IP: %s", username, client_ip)
     raise HTTPException(status_code=400, detail="Invalid credentials")

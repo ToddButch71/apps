@@ -1,0 +1,87 @@
+# ------------------------------------------------------------------
+# Monitoring stack – Grafana Labs
+# ------------------------------------------------------------------
+
+  # ------------------------------------------------------------
+  # Prometheus – collects metrics from all services
+  # ------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"   # UI
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=30d'   # keep data for 30 days
+    depends_on:
+      - node-exporter
+      - cAdvisor
+
+  # ------------------------------------------------------------
+  # node-exporter – host level metrics
+  # ------------------------------------------------------------
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: node_exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+
+  # ------------------------------------------------------------
+  # cAdvisor – container metrics
+  # ------------------------------------------------------------
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.48.0
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"   # optional – raw cAdvisor UI
+    volumes:
+      - '/:/rootfs:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/sys:/sys:ro'
+      - '/var/lib/docker/:/var/lib/docker:ro'
+
+  # ------------------------------------------------------------
+  # Grafana – the front‑end
+  # ------------------------------------------------------------
+  grafana:
+    image: grafana/grafana-oss:10.4.0
+    container_name: grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin          # change after first login
+      - GF_SECURITY_ADMIN_PASSWORD=admin     # change immediately!
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana   # persistence
+
+  # ------------------------------------------------------------
+  # Alertmanager – optional, but recommended
+  # ------------------------------------------------------------
+  alertmanager:
+    image: prom/alertmanager:v0.27.1
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/config.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    ports:
+      - "9093:9093"
+
+# ------------------------------------------------------------------
+# Volumes – persist Grafana data
+# ------------------------------------------------------------------
+volumes:
+  grafana-storage:
