@@ -2,7 +2,7 @@
 
 **Version 1.2.0**
 
-A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces, secured remote access via WireGuard VPN, and automated synchronization.
+A full-stack music catalog management system with Docker containerization, featuring both private admin and public read-only interfaces and automated synchronization.
 
 ## 🎵 Features
 
@@ -21,10 +21,9 @@ A full-stack music catalog management system with Docker containerization, featu
 ### Security & Access
 - **User Authentication**: Token-based auth for admin users (admin/toddb only)
 - **Access Logging**: Tracks login attempts and external IP access
-- **VPN Access Options**: 
-  - Use existing router WireGuard VPN (recommended)
+- **Remote Access Options**: 
+  - Use existing router VPN (recommended)
   - Direct port forwarding for public access
-  - Integrated WireGuard container (see WIREGUARD_SETUP.md)
 - **Public/Private Separation**: Isolated public catalog without admin capabilities
 
 ### Automation
@@ -35,7 +34,12 @@ A full-stack music catalog management system with Docker containerization, featu
 
 ## 📰 Recent Updates
 
-### Version 1.1.3 (Latest)
+### Version 1.2.0 (Latest)
+- ✅ **Removed WireGuard VPN**: Simplified architecture by removing integrated WireGuard container
+- ✅ **Streamlined Dockerfiles**: Single Dockerfile for both admin and public builds
+- ✅ **Cleaner Configuration**: Simplified Docker Compose with removed VPN service
+
+### Version 1.1.3
 - ✅ **Sortable Columns**: Click column headers to sort by Media Type, Artist, Album Title, Year, or Genre
 - ✅ **Visual Sort Indicators**: Clear visual feedback (⇅ ↑ ↓) on sortable columns
 - ✅ **Default Alphabetical Sort**: Albums now sorted by artist alphabetically on load
@@ -70,10 +74,10 @@ A full-stack music catalog management system with Docker containerization, featu
 │  │  Port 8000   │  │  Port 5173   │  │   Port 9000     │   │
 │  └──────────────┘  └──────────────┘  └─────────────────┘   │
 │                                                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐   │
-│  │ Nginx Proxy  │  │  WireGuard   │  │  File Watcher   │   │
-│  │  Port 8080   │  │51820/51821   │  │  Auto-Sync      │   │
-│  └──────────────┘  └──────────────┘  └─────────────────┘   │
+│  ┌──────────────┐  ┌─────────────────────────────────────┐  │
+│  │ Nginx Proxy  │  │  File Watcher - Auto-Sync           │  │
+│  │  Port 8080   │  │  Monitors & syncs admin → public    │  │
+│  └──────────────┘  └─────────────────────────────────────┘  │
 │                                                               │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -100,7 +104,6 @@ A full-stack music catalog management system with Docker containerization, featu
 
 **Infrastructure:**
 - Docker & Docker Compose
-- WireGuard VPN (wg-easy)
 - File system watcher with polling
 - Nginx reverse proxy
 - Automated version management with semantic versioning
@@ -126,23 +129,7 @@ admin:your_password
 toddb:your_password
 ```
 
-3. **Configure WireGuard (optional):**
-Edit `backend/.secrets.env` with your WireGuard password hash:
-```bash
-# Generate hash
-docker run --rm ghcr.io/wg-easy/wg-easy wgpw 'your_password'
-
-# Add to .secrets.env
-PASSWORD_HASH='$2a$12$...'
-```
-
-4. **Update WireGuard host IP:**
-Edit `compose.yaml` and set your public IP:
-```yaml
-- WG_HOST=YOUR_PUBLIC_IP
-```
-
-5. **Build and start services:**
+3. **Build and start services:**
 ```bash
 docker compose build
 docker compose up -d
@@ -156,7 +143,6 @@ docker compose up -d
 - **Public Catalog**: http://localhost:9000
 - **Backend API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
-- **WireGuard UI**: http://localhost:51821
 
 ### Admin Login
 - Username: `admin` or `toddb`
@@ -231,45 +217,25 @@ docker compose logs -f file-watcher
 - External (non-localhost) access logged separately
 - Logs stored in `backend/logs/external_access.log`
 
-### WireGuard VPN
-- Secure remote access to entire application
-- Encrypted tunnel via UDP port 51820
-- Web UI on TCP port 51821
-- Requires router port forwarding for external access
-- **Note**: If your router has built-in WireGuard VPN, use that instead (see WIREGUARD_SETUP.md)
+
 
 ## 🌐 Public Deployment
 
 ### Remote Access Options
 
-See `WIREGUARD_SETUP.md` for detailed remote access configurations:
-
 **Option 1: Use Router VPN (Recommended)**
-- If your router has WireGuard VPN, use that to access the application
+- If your router has a VPN (WireGuard, OpenVPN, etc.), use that to access the application
 - No additional port forwarding needed
 - Connect to VPN, then access services at local IP addresses
 
 **Option 2: Direct Port Forwarding**
 - Forward specific ports through your router
-- Simpler but less secure for admin interface
-
-**Option 3: Dockerized WireGuard**
-- Use the included WireGuard container
-- Full VPN access to all services
+- Simpler but requires careful firewall configuration for admin interface security
 
 ### Port Forwarding
-Configure your router to forward:
+If using direct port forwarding (not recommended for admin interface), configure your router to forward:
 - **TCP 9000** → Your machine's local IP (for public catalog)
-- **TCP 8080** → Your machine's local IP (for admin interface - use VPN instead if possible)
-- **UDP 51820** → Your machine's local IP (for WireGuard VPN, if using Option 3)
-- **TCP 51821** → Your machine's local IP (for WireGuard UI, if using Option 3)
-
-### Access via VPN
-1. Log into WireGuard UI at http://localhost:51821
-2. Create a client configuration
-3. Scan QR code or download config file
-4. Connect to VPN
-5. Access services at `10.8.0.1:<port>`
+- **TCP 8080** → Your machine's local IP (for admin interface - strongly recommend VPN instead)
 
 ## 📁 Project Structure
 
@@ -288,14 +254,12 @@ music-inventory-app/
 ├── frontend/
 │   ├── index.html           # Admin interface
 │   ├── index-public.html    # Public interface (auto-synced)
-│   ├── Dockerfile           # Admin build
-│   └── Dockerfile-public    # Public build
-├── wireguard/               # WireGuard configs (gitignored)
+│   ├── Dockerfile           # Build frontend
+│   └── package.json         # Dependencies
 ├── scripts/                 # Health check utilities
 ├── VERSION                  # Current version (semantic versioning)
 ├── CHANGELOG.md             # Version history and changes
 ├── VERSION_MANAGEMENT.md    # Version management guide
-├── WIREGUARD_SETUP.md       # WireGuard configuration guide
 ├── README.md                # This file
 ├── compose.yaml             # Docker Compose configuration
 ├── bump-version.sh          # Automated version & docs updater
@@ -392,11 +356,6 @@ docker compose build public-frontend
 docker compose up -d public-frontend
 ```
 
-### WireGuard login fails
-- Verify PASSWORD_HASH in `backend/.secrets.env`
-- Check hash format: `PASSWORD_HASH='$2a$12$...'`
-- Regenerate hash if needed
-
 ### CORS errors
 - Backend allows all origins by default (`allow_origins=["*"]`)
 - Check backend CORS configuration in `backend/app/main.py` if issues persist
@@ -419,7 +378,7 @@ docker compose up -d public-frontend
 
 This project uses semantic versioning (MAJOR.MINOR.PATCH). The version is stored in the `VERSION` file and automatically synchronized across all documentation files using the `bump-version.sh` script.
 
-**Current Version:** 1.1.3
+**Current Version:** 1.2.0
 
 For detailed version management workflows, see [VERSION_MANAGEMENT.md](VERSION_MANAGEMENT.md).
 
@@ -495,5 +454,4 @@ Todd Butcher (Todd.Butcher71@gmail.com)
 ## 🙏 Acknowledgments
 
 - FastAPI framework
-- WireGuard Easy (wg-easy)
 - Vite & React teams
