@@ -22,7 +22,8 @@ export const InventoryTable: React.FC = () => {
       <thead>
         <tr className="bg-gray-200">
           <th>Serial</th><th>Artist</th><th>Media</th>
-          <th>Year</th><th>Genre</th><th>Titles</th><th>Actions</th>
+          <th>Year</th><th>Genre</th><th>Media Condition</th>
+          <th>Sleeve Condition</th><th>Price</th><th>Titles</th><th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +34,9 @@ export const InventoryTable: React.FC = () => {
             <td>{rec.media}</td>
             <td>{rec.year}</td>
             <td>{rec.genre}</td>
+            <td>{rec.media_condition || '-'}</td>
+            <td>{rec.sleeve_condition || '-'}</td>
+            <td>{rec.price ? `$${parseFloat(rec.price).toFixed(2)}` : '-'}</td>
             <td>{rec.titles.join(', ')}</td>
             <td>
               {/* Admin actions – for brevity just delete */}

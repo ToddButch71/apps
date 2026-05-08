@@ -3,12 +3,27 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.middleware.cors import CORSMiddleware
 from pathlib import Path
 import logging
+import sys
+import os
 
 from .crud import (
     get_inventory, search_inventory,
     create_record, update_record, delete_record
 )
 from .auth import get_current_admin, create_token
+
+# Add parent directory to path for importing search_by_serial
+backend_dir = os.path.dirname(os.path.abspath(__file__))  # /app/backend/app -> /app/backend
+backend_parent = os.path.dirname(backend_dir)  # /app/backend
+if backend_parent not in sys.path:
+    sys.path.insert(0, backend_parent)
+
+# Import search function at module level
+try:
+    from search_by_serial import search_by_serial_number
+except ImportError as e:
+    print(f"Warning: Could not import search_by_serial_number: {e}")
+    search_by_serial_number = None
 
 # Load version from VERSION file
 def get_version():
@@ -121,6 +136,42 @@ def modify_record(serial: str, record: dict, admin: str = Depends(get_current_ad
 def remove_record(serial: str, admin: str = Depends(get_current_admin)):
     delete_record(serial)
     return {"detail": "Deleted"}
+
+# ---------- Discogs Search ----------
+DISCOGS_USER_TOKEN = "UOtFsmvrfoLFGEbnhdeZwPewfWKQdrKmmzadCEdq"
+
+@app.post("/search/discogs")
+def search_discogs(request: dict):
+    """Search Discogs by serial number and return album details."""
+    try:
+        from discogs_client import Client
+        
+        if search_by_serial_number is None:
+            return {
+                "status": "error",
+                "error": "search_by_serial module not available"
+            }
+        
+        serial = request.get('serial_number', '').strip()
+        user_token = request.get('discogs_token') or DISCOGS_USER_TOKEN
+        
+        if not serial:
+            raise HTTPException(status_code=400, detail="serial_number is required")
+        
+        # Initialize Discogs client with user token
+        client = Client('MusicInventoryAPI/1.0', user_token=user_token)
+        
+        # Perform search
+        result = search_by_serial_number(client, serial)
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e)
+        }
 
 # ---------- Admin auth ----------
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

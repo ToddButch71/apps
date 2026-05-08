@@ -165,8 +165,26 @@
         thead, tbody {
             display: table;
             width: 100%;
-            table-layout: fixed;
+            table-layout: auto;
         }
+
+        /* Set specific column widths to prevent notes from being too cramped */
+        th:nth-child(1), td:nth-child(1) { width: 80px; } /* Media Type */
+        th:nth-child(2), td:nth-child(2) { width: 150px; } /* Artist */
+        th:nth-child(3), td:nth-child(3) { width: 150px; } /* Album Title */
+        th:nth-child(4), td:nth-child(4) { width: 80px; } /* Year */
+        th:nth-child(5), td:nth-child(5) { width: 120px; } /* Barcode */
+        th:nth-child(6), td:nth-child(6) { width: 70px; } /* Media Count */
+        th:nth-child(7), td:nth-child(7) { width: 100px; } /* Genre */
+        th:nth-child(8), td:nth-child(8) { width: 100px; } /* Media Condition */
+        th:nth-child(9), td:nth-child(9) { width: 100px; } /* Sleeve Condition */
+        th:nth-child(10), td:nth-child(10) { width: 80px; } /* Price */
+        th:nth-child(11), td:nth-child(11) { 
+            width: auto;
+            min-width: 150px;
+            max-width: 300px;
+            white-space: normal;
+        } /* Notes - auto-sizing */
 
         th {
             padding: 14px 16px;
@@ -503,15 +521,19 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+            padding: 20px 0;
         }
 
         .modal-content {
             background-color: white;
-            margin: 15% auto;
+            margin: 20px auto;
             padding: 30px;
             border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
@@ -531,13 +553,15 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #d1d5db;
             border-radius: 6px;
             font-size: 1rem;
             font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
         }
 
         .form-group textarea {
@@ -641,13 +665,7 @@
             background: #dc2626;
         }
 
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
+        /* Remove duplicate select styling since it's now combined above */
     </style>
 </head>
 <body>
@@ -686,6 +704,18 @@
             <h2 id="albumModalTitle">Add New Album</h2>
             <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
                 <div class="form-group">
+                    <label for="albumSerial">Barcode/Serial:</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="albumSerial" placeholder="Enter barcode to search" required style="flex: 1;">
+                        <button type="button" class="btn btn-secondary" id="searchDiscogsBtn" onclick="searchDiscogs()">🔍 Search</button>
+                    </div>
+                    <div id="searchStatus" style="margin-top: 5px; font-size: 0.9em;"></div>
+                </div>
+                <div id="discogsResults" style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; display: none;">
+                    <strong>Discogs Results:</strong>
+                    <div id="discogsInfo" style="font-size: 0.9em; margin-top: 5px;"></div>
+                </div>
+                <div class="form-group">
                     <label for="albumMedia">Media Type:</label>
                     <select id="albumMedia" required>
                         <option value="">Select media type</option>
@@ -706,10 +736,6 @@
                 <div class="form-group">
                     <label for="albumYear">Year Released:</label>
                     <input type="number" id="albumYear" min="1900" max="2100" required>
-                </div>
-                <div class="form-group">
-                    <label for="albumSerial">Barcode:</label>
-                    <input type="text" id="albumSerial" required>
                 </div>
                 <div class="form-group">
                     <label for="albumMediaCount">Media Count:</label>
@@ -735,6 +761,40 @@
                         <option value="Folk">
                         <option value="Other">
                     </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="albumMediaCondition">Media Condition:</label>
+                    <select id="albumMediaCondition">
+                        <option value="">Select condition...</option>
+                        <option value="M">M (Mint)</option>
+                        <option value="NM">NM (Near Mint)</option>
+                        <option value="M-">M- (Mint Minus)</option>
+                        <option value="VG+">VG+ (Very Good Plus)</option>
+                        <option value="VG">VG (Very Good)</option>
+                        <option value="G+">G+ (Good Plus)</option>
+                        <option value="G">G (Good)</option>
+                        <option value="P">P (Poor)</option>
+                        <option value="unk">Unknown</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="albumSleeveCondition">Sleeve Condition:</label>
+                    <select id="albumSleeveCondition">
+                        <option value="">Select condition...</option>
+                        <option value="M">M (Mint)</option>
+                        <option value="NM">NM (Near Mint)</option>
+                        <option value="M-">M- (Mint Minus)</option>
+                        <option value="VG+">VG+ (Very Good Plus)</option>
+                        <option value="VG">VG (Very Good)</option>
+                        <option value="G+">G+ (Good Plus)</option>
+                        <option value="G">G (Good)</option>
+                        <option value="P">P (Poor)</option>
+                        <option value="unk">Unknown</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="albumPrice">Price (USD):</label>
+                    <input type="number" id="albumPrice" step="0.01" min="0" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label for="albumNotes">Notes (optional):</label>
@@ -873,6 +933,9 @@
                         <th>Barcode</th>
                         <th>Media Count</th>
                         <th class="sortable" data-column="genre">Genre</th>
+                        <th class="sortable" data-column="media_condition">Media Condition</th>
+                        <th class="sortable" data-column="sleeve_condition">Sleeve Condition</th>
+                        <th class="sortable" data-column="price">Price</th>
                         <th>Notes</th>
                         <th id="actionsHeader" style="display:none;">Actions</th>
                     </tr>
@@ -1162,6 +1225,9 @@
             document.getElementById('albumSerial').value = record.serial_number;
             document.getElementById('albumMediaCount').value = record.media_count || 1;
             document.getElementById('albumGenre').value = record.genre;
+            document.getElementById('albumMediaCondition').value = record.media_condition || "";
+            document.getElementById('albumSleeveCondition').value = record.sleeve_condition || "";
+            document.getElementById('albumPrice').value = record.price || "";
             document.getElementById('albumNotes').value = record.notes || "";
             document.getElementById('albumError').style.display = 'none';
             document.getElementById('albumModal').style.display = 'block';
@@ -1170,7 +1236,95 @@
         function closeAlbumModal() {
             document.getElementById('albumModal').style.display = 'none';
             document.getElementById('albumForm').reset();
+            document.getElementById('discogsResults').style.display = 'none';
+            document.getElementById('searchStatus').textContent = '';
             editingSerial = null;
+        }
+
+        async function searchDiscogs() {
+            const serial = document.getElementById('albumSerial').value.trim();
+            const statusDiv = document.getElementById('searchStatus');
+            const resultsDiv = document.getElementById('discogsResults');
+            const resultsInfo = document.getElementById('discogsInfo');
+            
+            if (!serial) {
+                statusDiv.textContent = '❌ Please enter a barcode/serial number';
+                statusDiv.style.color = 'red';
+                return;
+            }
+
+            // Check for duplicate in current inventory
+            const isDuplicate = musicData.some(item => 
+                item.serial_number === serial || item.barcode === serial
+            );
+            if (isDuplicate) {
+                statusDiv.textContent = '⚠️ This barcode already exists in your inventory';
+                statusDiv.style.color = 'orange';
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            statusDiv.textContent = '🔍 Searching Discogs...';
+            statusDiv.style.color = 'blue';
+            resultsDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/search/discogs`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        serial_number: serial,
+                        discogs_token: "UOtFsmvrfoLFGEbnhdeZwPewfWKQdrKmmzadCEdq"
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'found') {
+                    statusDiv.textContent = '✅ Found on Discogs';
+                    statusDiv.style.color = 'green';
+                    
+                    // Populate form fields
+                    document.getElementById('albumArtist').value = data.artist || '';
+                    document.getElementById('albumTitle').value = data.album_title || '';
+                    document.getElementById('albumYear').value = data.year || new Date().getFullYear();
+                    document.getElementById('albumGenre').value = data.genre || '';
+                    document.getElementById('albumMedia').value = getMediaTypeFromDiscogs(data.media) || '';
+                    
+                    // Show results
+                    resultsInfo.innerHTML = `
+                        <strong>${data.artist}</strong> - ${data.album_title}<br>
+                        Year: ${data.year} | Media: ${data.media}<br>
+                        Genre: ${data.genre}<br>
+                        Discogs: <a href="${data.discogs_url}" target="_blank">View on Discogs</a>
+                    `;
+                    resultsDiv.style.display = 'block';
+                } else if (data.status === 'not_found') {
+                    statusDiv.textContent = '❌ Not found on Discogs - Fill in manually';
+                    statusDiv.style.color = 'red';
+                    resultsDiv.style.display = 'none';
+                } else {
+                    statusDiv.textContent = `⚠️ Error: ${data.error || 'Unknown error'}`;
+                    statusDiv.style.color = 'red';
+                    resultsDiv.style.display = 'none';
+                }
+            } catch (error) {
+                statusDiv.textContent = `❌ Search failed: ${error.message}`;
+                statusDiv.style.color = 'red';
+                resultsDiv.style.display = 'none';
+            }
+        }
+
+        function getMediaTypeFromDiscogs(discogsMedia) {
+            // Map Discogs media types to our options
+            const discogsMediaLower = (discogsMedia || '').toLowerCase();
+            if (discogsMediaLower.includes('cd')) return 'cd';
+            if (discogsMediaLower.includes('vinyl') || discogsMediaLower.includes('lp')) return 'vinyl';
+            if (discogsMediaLower.includes('dvd')) return 'dvd';
+            if (discogsMediaLower.includes('digital')) return 'digital';
+            return '';
         }
 
         async function handleAlbumSubmit(event) {
@@ -1184,6 +1338,9 @@
                 serial_number: document.getElementById('albumSerial').value,
                 media_count: parseInt(document.getElementById('albumMediaCount').value),
                 genre: document.getElementById('albumGenre').value,
+                media_condition: document.getElementById('albumMediaCondition').value || null,
+                sleeve_condition: document.getElementById('albumSleeveCondition').value || null,
+                price: document.getElementById('albumPrice').value || null,
                 notes: document.getElementById('albumNotes').value || ""
             };
 
@@ -1357,6 +1514,18 @@
                         aVal = a.genre.toLowerCase();
                         bVal = b.genre.toLowerCase();
                         break;
+                    case 'media_condition':
+                        aVal = a.media_condition || 'zzz';
+                        bVal = b.media_condition || 'zzz';
+                        break;
+                    case 'sleeve_condition':
+                        aVal = a.sleeve_condition || 'zzz';
+                        bVal = b.sleeve_condition || 'zzz';
+                        break;
+                    case 'price':
+                        aVal = parseFloat(a.price || 0);
+                        bVal = parseFloat(b.price || 0);
+                        break;
                     default:
                         aVal = a.artist.toLowerCase();
                         bVal = b.artist.toLowerCase();
@@ -1399,6 +1568,9 @@
                     <td>${item.serial_number}</td>
                     <td>${item.media_count || 1}</td>
                     <td>${item.genre}</td>
+                    <td>${item.media_condition || '-'}</td>
+                    <td>${item.sleeve_condition || '-'}</td>
+                    <td>${item.price ? '$' + parseFloat(item.price).toFixed(2) : '-'}</td>
                     <td>${escapeHtml(item.notes || "")}</td>
                     ${actionsCell}
                 `;
@@ -1519,29 +1691,43 @@
             document.getElementById('mediaTypeDetails').innerHTML = mediaDetailsHTML;
 
             // Timeline Stats
-            const years = dataToAnalyze.map(item => item.year);
-            const oldestYear = Math.min(...years);
-            const newestYear = Math.max(...years);
-            const yearSpan = newestYear - oldestYear;
+            const years = dataToAnalyze.map(item => item.year).filter(y => y != null && !isNaN(y));
+            
+            if (years.length > 0) {
+                const oldestYear = Math.min(...years);
+                const newestYear = Math.max(...years);
+                const yearSpan = newestYear - oldestYear;
 
-            // Find albums for newest and oldest years
-            const newestAlbums = dataToAnalyze.filter(item => item.year === newestYear);
-            const oldestAlbums = dataToAnalyze.filter(item => item.year === oldestYear);
-            const newestAlbum = newestAlbums[0];
-            const oldestAlbum = oldestAlbums[0];
+                // Find albums for newest and oldest years
+                const newestAlbums = dataToAnalyze.filter(item => item.year === newestYear);
+                const oldestAlbums = dataToAnalyze.filter(item => item.year === oldestYear);
+                const newestAlbum = newestAlbums[0];
+                const oldestAlbum = oldestAlbums[0];
 
-            document.getElementById('newestYear').textContent = newestYear;
-            document.getElementById('newestAlbum').textContent = newestAlbums.length > 1
-                ? `${newestAlbum.artist.substring(0, 20)}... +${newestAlbums.length - 1} more`
-                : newestAlbum.artist.substring(0, 25);
+                document.getElementById('newestYear').textContent = newestYear;
+                document.getElementById('newestAlbum').textContent = newestAlbum && newestAlbum.artist
+                    ? (newestAlbums.length > 1
+                        ? `${newestAlbum.artist.substring(0, 20)}... +${newestAlbums.length - 1} more`
+                        : newestAlbum.artist.substring(0, 25))
+                    : 'No data';
 
-            document.getElementById('oldestYear').textContent = oldestYear;
-            document.getElementById('oldestAlbum').textContent = oldestAlbums.length > 1
-                ? `${oldestAlbum.artist.substring(0, 20)}... +${oldestAlbums.length - 1} more`
-                : oldestAlbum.artist.substring(0, 25);
+                document.getElementById('oldestYear').textContent = oldestYear;
+                document.getElementById('oldestAlbum').textContent = oldestAlbum && oldestAlbum.artist
+                    ? (oldestAlbums.length > 1
+                        ? `${oldestAlbum.artist.substring(0, 20)}... +${oldestAlbums.length - 1} more`
+                        : oldestAlbum.artist.substring(0, 25))
+                    : 'No data';
 
-            animateValue('yearSpan', yearSpan);
-            document.getElementById('yearRange').textContent = `${oldestYear} to ${newestYear}`;
+                animateValue('yearSpan', yearSpan);
+                document.getElementById('yearRange').textContent = `${oldestYear} to ${newestYear}`;
+            } else {
+                document.getElementById('newestYear').textContent = '--';
+                document.getElementById('newestAlbum').textContent = 'No year data';
+                document.getElementById('oldestYear').textContent = '--';
+                document.getElementById('oldestAlbum').textContent = 'No year data';
+                document.getElementById('yearSpan').textContent = '0';
+                document.getElementById('yearRange').textContent = 'No year data';
+            }
 
             // Artist Stats
             const artistMap = new Map();

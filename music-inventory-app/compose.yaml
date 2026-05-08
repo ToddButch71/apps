@@ -3,6 +3,7 @@ services:
   backend:
     build: ./backend
     volumes:
+      - ./backend/app:/app/backend/app   # mount app code for hot reload
       - ./backend/data:/data   # persistence for JSON file
       - ./backend/.secrets:/app/backend/.secrets:ro   # mount credentials file
       - ./backend/logs:/app/backend/logs   # persist external access logs
@@ -10,7 +11,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     ports:
-      - "8000:8000"
+      - "0.0.0.0:8000:8000"  # Explicitly bind to all interfaces for external access
+    networks:
+      - music-inventory-net
 
   frontend:
     build: ./frontend
@@ -20,7 +23,9 @@ services:
       - VIRTUAL_HOST=localhost,10.19.71.122
       - VIRTUAL_PORT=80
     ports:
-      - "5173:80"
+      - "0.0.0.0:5173:80"  # Explicitly bind to all interfaces
+    networks:
+      - music-inventory-net
 
   public-frontend:
     build:
@@ -28,15 +33,19 @@ services:
       dockerfile: Dockerfile-public
     depends_on: [backend]
     ports:
-      - "9000:80"
+      - "0.0.0.0:9000:80"  # Explicitly bind to all interfaces
+    networks:
+      - music-inventory-net
 
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
     ports:
-      - "8080:80"
+      - "0.0.0.0:8080:80"  # Explicitly bind to all interfaces
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - music-inventory-net
 
   file-watcher:
     build:
@@ -49,5 +58,11 @@ services:
     restart: unless-stopped
     depends_on:
       - public-frontend
+    networks:
+      - music-inventory-net
+
+networks:
+  music-inventory-net:
+    driver: bridge
 
 

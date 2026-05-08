@@ -59,6 +59,54 @@
       "year": 2001,
       "serial_number": 676127505326,
       "genre": "Electronic"
+    },
+    {
+      "serial_number": "75596265393",
+      "artist": "Björk",
+      "titles": "Vespertine",
+      "year": 2001,
+      "media": "DVD",
+      "genre": "Electronic, Pop",
+      "barcode": "075596265393",
+      "discogs_id": 1841804,
+      "discogs_url": "https://www.discogs.com/release/1841804-Björk-Vespertine",
+      "date_added": "2026-01-31T20:40:13.495466",
+      "source": "gui_import"
+    },
+    {
+      "serial_number": "1658182102",
+      "artist": "Various",
+      "titles": [
+        "Blade (Music From And Inspired By The Motion Picture)"
+      ],
+      "year": 1998,
+      "media": "CD",
+      "genre": "Electronic, Hip Hop, Stage & Screen",
+      "barcode": "0 16581 82102 6",
+      "media_condition": "NM",
+      "sleeve_condition": "NM",
+      "discogs_id": 2610079,
+      "discogs_url": "https://www.discogs.com/release/2610079-Various-Blade-Music-From-And-Inspired-By-The-Motion-Picture",
+      "date_added": "2026-01-31T21:22:54.388424",
+      "source": "gui_import"
+    },
+    {
+      "serial_number": "243854326",
+      "artist": "Donald Byrd",
+      "titles": [
+        "Places And Spaces"
+      ],
+      "year": 1975,
+      "media": "CD",
+      "genre": "Jazz",
+      "barcode": "7 2438-54326-2 0",
+      "media_condition": "VG+",
+      "sleeve_condition": "M",
+      "notes": "1997 re-issue",
+      "discogs_id": 17358307,
+      "discogs_url": "https://www.discogs.com/release/17358307-Donald-Byrd-Places-And-Spaces",
+      "date_added": "2026-01-31T22:29:24.526609",
+      "source": "gui_import"
     }
   ]
 }
